@@ -38,7 +38,14 @@ const noticeInput = z.object({
   publish_at: z.string().datetime(),
 });
 
-async function requireAdmin(ctx: { supabase: any; userId: string }) {
+type SupabaseRoleChecker = {
+  rpc: (
+    fn: string,
+    args: { _user_id: string; _role: string },
+  ) => Promise<{ data: boolean | null; error?: unknown }>;
+};
+
+async function requireAdmin(ctx: { supabase: SupabaseRoleChecker; userId: string }) {
   const { data } = await ctx.supabase.rpc("has_role", { _user_id: ctx.userId, _role: "admin" });
   if (!data) throw new Error("Forbidden: admin only");
 }
@@ -47,7 +54,10 @@ export const listAllAnnouncements = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await requireAdmin(context);
-    const { data, error } = await context.supabase.from("announcements").select("*").order("publish_at", { ascending: false });
+    const { data, error } = await context.supabase
+      .from("announcements")
+      .select("*")
+      .order("publish_at", { ascending: false });
     if (error) throw error;
     return data;
   });
@@ -57,7 +67,11 @@ export const createAnnouncement = createServerFn({ method: "POST" })
   .inputValidator((i) => announcementInput.parse(i))
   .handler(async ({ context, data }) => {
     await requireAdmin(context);
-    const { data: row, error } = await context.supabase.from("announcements").insert(data).select().single();
+    const { data: row, error } = await context.supabase
+      .from("announcements")
+      .insert(data)
+      .select()
+      .single();
     if (error) throw error;
     return row;
   });
@@ -68,7 +82,12 @@ export const updateAnnouncement = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     await requireAdmin(context);
     const { id, ...patch } = data;
-    const { data: row, error } = await context.supabase.from("announcements").update(patch).eq("id", id).select().single();
+    const { data: row, error } = await context.supabase
+      .from("announcements")
+      .update(patch)
+      .eq("id", id)
+      .select()
+      .single();
     if (error) throw error;
     return row;
   });
@@ -87,7 +106,10 @@ export const listAllNotices = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await requireAdmin(context);
-    const { data, error } = await context.supabase.from("notices").select("*").order("publish_at", { ascending: false });
+    const { data, error } = await context.supabase
+      .from("notices")
+      .select("*")
+      .order("publish_at", { ascending: false });
     if (error) throw error;
     return data;
   });
@@ -97,7 +119,11 @@ export const createNotice = createServerFn({ method: "POST" })
   .inputValidator((i) => noticeInput.parse(i))
   .handler(async ({ context, data }) => {
     await requireAdmin(context);
-    const { data: row, error } = await context.supabase.from("notices").insert(data).select().single();
+    const { data: row, error } = await context.supabase
+      .from("notices")
+      .insert(data)
+      .select()
+      .single();
     if (error) throw error;
     return row;
   });
@@ -108,7 +134,12 @@ export const updateNotice = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     await requireAdmin(context);
     const { id, ...patch } = data;
-    const { data: row, error } = await context.supabase.from("notices").update(patch).eq("id", id).select().single();
+    const { data: row, error } = await context.supabase
+      .from("notices")
+      .update(patch)
+      .eq("id", id)
+      .select()
+      .single();
     if (error) throw error;
     return row;
   });
@@ -130,7 +161,9 @@ export const deleteNotice = createServerFn({ method: "POST" })
 async function sha256Hex(text: string) {
   const enc = new TextEncoder().encode(text);
   const buf = await crypto.subtle.digest("SHA-256", enc);
-  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 function generateCode(): string {
@@ -174,7 +207,9 @@ async function sendOwnerApprovalEmail(code: string, requesterEmail: string) {
   });
   if (!res.ok) {
     const body = await res.text();
-    console.error(`[admin-approval] Resend failed [${res.status}]: ${body}. Code for ${requesterEmail}: ${code}`);
+    console.error(
+      `[admin-approval] Resend failed [${res.status}]: ${body}. Code for ${requesterEmail}: ${code}`,
+    );
     return { delivered: false };
   }
   return { delivered: true };
@@ -190,12 +225,17 @@ export const requestAdminApproval = createServerFn({ method: "POST" })
     const email = c?.email ?? null;
     const emailVerified = Boolean(c?.email_confirmed_at);
     if (!email) throw new Error("Missing email on account");
-    if (!emailVerified) throw new Error("Please verify your email first, then request admin approval.");
+    if (!emailVerified)
+      throw new Error("Please verify your email first, then request admin approval.");
 
     // If already admin, no-op.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: role } = await supabaseAdmin
-      .from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
     if (role) return { delivered: true, alreadyAdmin: true };
 
     const code = generateCode();
@@ -203,12 +243,17 @@ export const requestAdminApproval = createServerFn({ method: "POST" })
     const expires = new Date(Date.now() + 30 * 60 * 1000).toISOString();
 
     // Invalidate any previous pending requests for this user.
-    await supabaseAdmin.from("admin_approval_requests")
+    await supabaseAdmin
+      .from("admin_approval_requests")
       .update({ used_at: new Date().toISOString() })
-      .eq("user_id", userId).is("used_at", null);
+      .eq("user_id", userId)
+      .is("used_at", null);
 
     const { error: insErr } = await supabaseAdmin.from("admin_approval_requests").insert({
-      user_id: userId, email, code_hash: codeHash, expires_at: expires,
+      user_id: userId,
+      email,
+      code_hash: codeHash,
+      expires_at: expires,
     });
     if (insErr) throw insErr;
 
@@ -223,25 +268,38 @@ export const verifyAdminApproval = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const { userId, claims } = context;
     const c = claims as { email_confirmed_at?: string | null };
-    if (!c?.email_confirmed_at) throw new Error("Verify your email before submitting an approval code.");
+    if (!c?.email_confirmed_at)
+      throw new Error("Verify your email before submitting an approval code.");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const codeHash = await sha256Hex(data.code);
     const nowIso = new Date().toISOString();
 
-    const { data: req } = await supabaseAdmin.from("admin_approval_requests")
+    const { data: req } = await supabaseAdmin
+      .from("admin_approval_requests")
       .select("id, code_hash, expires_at, used_at")
-      .eq("user_id", userId).is("used_at", null)
-      .order("created_at", { ascending: false }).limit(1).maybeSingle();
+      .eq("user_id", userId)
+      .is("used_at", null)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
     if (!req) throw new Error("No pending approval request. Request one first.");
-    if (new Date(req.expires_at).getTime() < Date.now()) throw new Error("Code expired. Request a new one.");
+    if (new Date(req.expires_at).getTime() < Date.now())
+      throw new Error("Code expired. Request a new one.");
     if (req.code_hash !== codeHash) throw new Error("Incorrect approval code.");
 
-    await supabaseAdmin.from("admin_approval_requests").update({ used_at: nowIso }).eq("id", req.id);
+    await supabaseAdmin
+      .from("admin_approval_requests")
+      .update({ used_at: nowIso })
+      .eq("id", req.id);
 
     // Grant admin role (idempotent).
-    const { data: existing } = await supabaseAdmin.from("user_roles")
-      .select("id").eq("user_id", userId).eq("role", "admin").maybeSingle();
+    const { data: existing } = await supabaseAdmin
+      .from("user_roles")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
     if (!existing) {
       await supabaseAdmin.from("user_roles").insert({ user_id: userId, role: "admin" });
     }

@@ -20,12 +20,15 @@ export function AnnouncementBanner() {
     <div className="fixed top-[72px] inset-x-0 z-40 border-b border-border/50 bg-primary text-primary-foreground overflow-hidden">
       <div className="max-w-7xl mx-auto flex items-center gap-3 px-4 sm:px-6 py-1.5">
         <div className="shrink-0 flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em]">
-          <Megaphone className="size-3.5" /> <span className="hidden xs:inline sm:inline">Balo News</span>
+          <Megaphone className="size-3.5" />{" "}
+          <span className="hidden xs:inline sm:inline">Balo News</span>
         </div>
         <div className="relative flex-1 overflow-hidden">
           <div className="balo-marquee-track flex gap-12 whitespace-nowrap text-sm w-max">
             {track.map((m, i) => (
-              <span key={i} className="shrink-0">{m}</span>
+              <span key={i} className="shrink-0">
+                {m}
+              </span>
             ))}
           </div>
         </div>

@@ -8,10 +8,16 @@ function readSeen(): string[] {
   try {
     const raw = localStorage.getItem(SEEN_KEY);
     return raw ? (JSON.parse(raw) as string[]) : [];
-  } catch { return []; }
+  } catch {
+    return [];
+  }
 }
 function writeSeen(ids: string[]) {
-  try { localStorage.setItem(SEEN_KEY, JSON.stringify(ids)); } catch {}
+  try {
+    localStorage.setItem(SEEN_KEY, JSON.stringify(ids));
+  } catch {
+    return;
+  }
 }
 
 function maybeNotify(items: PublicNotice[]) {
@@ -21,7 +27,11 @@ function maybeNotify(items: PublicNotice[]) {
   const seen = new Set(readSeen());
   for (const n of items) {
     if (!seen.has(n.id)) {
-      try { new Notification(n.title, { body: n.body }); } catch {}
+      try {
+        new Notification(n.title, { body: n.body });
+      } catch {
+        continue;
+      }
     }
   }
 }

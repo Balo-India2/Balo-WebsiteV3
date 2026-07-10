@@ -14,7 +14,10 @@ function AdminLayout() {
   const navigate = useNavigate();
   const checkAdmin = useServerFn(getAdminStatus);
   const [state, setState] = useState<
-    { kind: "loading" } | { kind: "signed-out" } | { kind: "not-admin"; email: string | null } | { kind: "admin"; email: string | null }
+    | { kind: "loading" }
+    | { kind: "signed-out" }
+    | { kind: "not-admin"; email: string | null }
+    | { kind: "admin"; email: string | null }
   >({ kind: "loading" });
 
   useEffect(() => {
@@ -26,7 +29,9 @@ function AdminLayout() {
       try {
         const r = await checkAdmin();
         if (!mounted) return;
-        setState(r.isAdmin ? { kind: "admin", email: r.email } : { kind: "not-admin", email: r.email });
+        setState(
+          r.isAdmin ? { kind: "admin", email: r.email } : { kind: "not-admin", email: r.email },
+        );
       } catch {
         if (mounted) setState({ kind: "not-admin", email: null });
       }
@@ -35,11 +40,18 @@ function AdminLayout() {
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_IN" || event === "SIGNED_OUT") check();
     });
-    return () => { mounted = false; sub.subscription.unsubscribe(); };
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
   }, [checkAdmin]);
 
   if (state.kind === "loading") {
-    return <div className="min-h-screen grid place-items-center bg-background text-muted-foreground">Checking access…</div>;
+    return (
+      <div className="min-h-screen grid place-items-center bg-background text-muted-foreground">
+        Checking access…
+      </div>
+    );
   }
   if (state.kind === "signed-out") {
     throw redirect({ to: "/admin-login" });
@@ -54,7 +66,10 @@ function AdminLayout() {
             {state.email ?? "This account"} is not an admin. Sign in with the admin email.
           </p>
           <button
-            onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/admin-login" }); }}
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate({ to: "/admin-login" });
+            }}
             className="mt-6 inline-flex items-center gap-2 rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium"
           >
             Sign out
@@ -73,7 +88,9 @@ function AdminLayout() {
             <span className="font-display font-bold">Balo Admin</span>
           </div>
           <div className="flex items-center gap-3 text-sm">
-            <Link to="/" className="text-muted-foreground hover:text-foreground">View site</Link>
+            <Link to="/" className="text-muted-foreground hover:text-foreground">
+              View site
+            </Link>
             <div className="flex items-center gap-2 rounded-full border border-border bg-background pl-1.5 pr-3 py-1">
               <span className="grid place-items-center size-7 rounded-full bg-primary/10 text-primary">
                 <UserCircle2 className="size-5" />
@@ -83,7 +100,10 @@ function AdminLayout() {
               </span>
             </div>
             <button
-              onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/admin-login" }); }}
+              onClick={async () => {
+                await supabase.auth.signOut();
+                navigate({ to: "/admin-login" });
+              }}
               className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 hover:bg-muted"
             >
               <LogOut className="size-4" /> Sign out
