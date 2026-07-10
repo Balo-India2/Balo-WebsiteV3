@@ -38,7 +38,9 @@ function ensureAnnChannel() {
   if (annChannel) return;
   annChannel = supabase
     .channel(`ann-${Math.random().toString(36).slice(2)}`)
-    .on("postgres_changes", { event: "*", schema: "public", table: "announcements" }, () => loadAnn())
+    .on("postgres_changes", { event: "*", schema: "public", table: "announcements" }, () =>
+      loadAnn(),
+    )
     .subscribe();
 }
 
@@ -47,8 +49,13 @@ export function useLiveAnnouncements() {
   useEffect(() => {
     annSubs.add(setItems);
     ensureAnnChannel();
-    if (!annLoaded) { annLoaded = true; loadAnn(); } else setItems(annCache);
-    return () => { annSubs.delete(setItems); };
+    if (!annLoaded) {
+      annLoaded = true;
+      loadAnn();
+    } else setItems(annCache);
+    return () => {
+      annSubs.delete(setItems);
+    };
   }, []);
   return items;
 }
@@ -84,8 +91,13 @@ export function useLiveNotices() {
   useEffect(() => {
     notSubs.add(setItems);
     ensureNotChannel();
-    if (!notLoaded) { notLoaded = true; loadNot(); } else setItems(notCache);
-    return () => { notSubs.delete(setItems); };
+    if (!notLoaded) {
+      notLoaded = true;
+      loadNot();
+    } else setItems(notCache);
+    return () => {
+      notSubs.delete(setItems);
+    };
   }, []);
   return items;
 }

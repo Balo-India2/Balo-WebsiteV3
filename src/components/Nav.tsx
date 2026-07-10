@@ -56,7 +56,10 @@ function LangSwitcher({ mobile = false }: { mobile?: boolean }) {
             {langOptions.map((o) => (
               <button
                 key={o.code}
-                onClick={() => { setLang(o.code); setOpen(false); }}
+                onClick={() => {
+                  setLang(o.code);
+                  setOpen(false);
+                }}
                 className={`${mobile ? "flex-1 rounded-full px-3 py-1.5 text-xs" : "block w-full text-left px-3 py-2 rounded-lg text-sm"} font-semibold transition-colors ${
                   lang === o.code ? "bg-accent text-accent-foreground" : "hover:bg-muted"
                 }`}
@@ -195,7 +198,9 @@ export function Nav() {
           >
             <div className="px-6 py-4 space-y-3">
               {navItems.map((item) => renderItem(item, true))}
-              <div className="pt-2"><LangSwitcher mobile /></div>
+              <div className="pt-2">
+                <LangSwitcher mobile />
+              </div>
               <a
                 href={DONATE_URL}
                 target="_blank"

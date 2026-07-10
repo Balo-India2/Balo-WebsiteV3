@@ -2,7 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
-  BookOpen, Monitor, FlaskConical, Presentation, Wind, Stethoscope, UtensilsCrossed, CheckCircle2,
+  BookOpen,
+  Monitor,
+  FlaskConical,
+  Presentation,
+  Wind,
+  Stethoscope,
+  UtensilsCrossed,
+  CheckCircle2,
 } from "lucide-react";
 
 import library from "@/assets/library.jpg";
@@ -36,9 +43,17 @@ export const Route = createFileRoute("/facilities")({
   head: () => ({
     meta: [
       { title: "Facilities — Balo English Medium School, Howrah" },
-      { name: "description", content: "Explore Balo English Medium School's modern facilities: library, computer lab, science laboratory, smart classes, and air-conditioned classrooms." },
+      {
+        name: "description",
+        content:
+          "Explore Balo English Medium School's modern facilities: library, computer lab, science laboratory, smart classes, and air-conditioned classrooms.",
+      },
       { property: "og:title", content: "Facilities — Balo English Medium School" },
-      { property: "og:description", content: "Library, computer lab, science laboratory, smart classes, and AC classrooms at Balo English Medium School, Howrah." },
+      {
+        property: "og:description",
+        content:
+          "Library, computer lab, science laboratory, smart classes, and AC classrooms at Balo English Medium School, Howrah.",
+      },
       { property: "og:image", content: smartClass },
     ],
     links: [{ rel: "canonical", href: "/facilities" }],
@@ -61,56 +76,98 @@ const facilities = [
     title: "Library",
     image: library,
     carousel: librarySlides,
-    description: "A warm, inviting space filled with storybooks, reference materials, and periodicals. Our library encourages every child to read for joy and discovery.",
-    features: ["Age-graded reading corners", "Bengali & English collections", "Daily reading periods", "Librarian-guided sessions"],
+    description:
+      "A warm, inviting space filled with storybooks, reference materials, and periodicals. Our library encourages every child to read for joy and discovery.",
+    features: [
+      "Age-graded reading corners",
+      "Bengali & English collections",
+      "Daily reading periods",
+      "Librarian-guided sessions",
+    ],
   },
   {
     icon: Monitor,
     title: "Computer Lab",
     image: computerLab,
     carousel: computerSlides,
-    description: "A modern computer lab where students learn typing, coding basics, digital literacy, and safe internet practices from an early age.",
-    features: ["Updated desktop computers", "Coding & typing programs", "Project-based learning", "Teacher-supervised browsing"],
+    description:
+      "A modern computer lab where students learn typing, coding basics, digital literacy, and safe internet practices from an early age.",
+    features: [
+      "Updated desktop computers",
+      "Coding & typing programs",
+      "Project-based learning",
+      "Teacher-supervised browsing",
+    ],
   },
   {
     icon: FlaskConical,
     title: "Science Laboratory",
     image: scienceExp1,
     carousel: scienceSlides,
-    description: "Our science lab turns textbooks into hands-on experiments. Students observe, measure, mix, and discover the principles of physics, chemistry, and biology.",
-    features: ["Lab tables & safety equipment", "Microscopes & specimens", "Experiment kits", "Guided practical classes"],
+    description:
+      "Our science lab turns textbooks into hands-on experiments. Students observe, measure, mix, and discover the principles of physics, chemistry, and biology.",
+    features: [
+      "Lab tables & safety equipment",
+      "Microscopes & specimens",
+      "Experiment kits",
+      "Guided practical classes",
+    ],
   },
   {
     icon: Presentation,
     title: "Smart Classes",
     image: smartClass,
     carousel: smartSlides,
-    description: "Interactive whiteboards, projectors, and multimedia lessons bring concepts to life. Smart classes make learning visual, engaging, and memorable.",
-    features: ["Interactive digital boards", "Projector & audio systems", "Animated lesson modules", "Tablet-assisted activities"],
+    description:
+      "Interactive whiteboards, projectors, and multimedia lessons bring concepts to life. Smart classes make learning visual, engaging, and memorable.",
+    features: [
+      "Interactive digital boards",
+      "Projector & audio systems",
+      "Animated lesson modules",
+      "Tablet-assisted activities",
+    ],
   },
   {
     icon: Wind,
     title: "Air-Conditioned Classrooms",
     image: acClassroom,
     carousel: acSlides,
-    description: "Comfortable, climate-controlled classrooms help students stay focused and alert through Howrah's warmest months.",
-    features: ["Ceiling & split AC units", "Bright LED lighting", "Spacious seating", "Clean, ventilated rooms"],
+    description:
+      "Comfortable, climate-controlled classrooms help students stay focused and alert through Howrah's warmest months.",
+    features: [
+      "Ceiling & split AC units",
+      "Bright LED lighting",
+      "Spacious seating",
+      "Clean, ventilated rooms",
+    ],
   },
   {
     icon: Stethoscope,
     title: "Free Health Care",
     image: healthcare,
     carousel: healthcareSlides,
-    description: "Every student has access to free, on-campus health check-ups and basic medical care. Our visiting doctor monitors growth, treats minor illnesses, and ensures no child misses school for lack of care.",
-    features: ["Regular health check-ups", "First aid & basic medicines", "Vision & dental screening", "Doctor on call"],
+    description:
+      "Every student has access to free, on-campus health check-ups and basic medical care. Our visiting doctor monitors growth, treats minor illnesses, and ensures no child misses school for lack of care.",
+    features: [
+      "Regular health check-ups",
+      "First aid & basic medicines",
+      "Vision & dental screening",
+      "Doctor on call",
+    ],
   },
   {
     icon: UtensilsCrossed,
     title: "Meal after Classes",
     image: mealAsset,
     carousel: mealSlides,
-    description: "A nutritious, hot meal is served to every student after classes. For many children, this is their most important meal of the day — shared with friends in a warm, communal atmosphere.",
-    features: ["Hot meal for 480+ students", "Balanced, locally sourced nutrition", "Clean, supervised dining space", "No child goes home hungry"],
+    description:
+      "A nutritious, hot meal is served to every student after classes. For many children, this is their most important meal of the day — shared with friends in a warm, communal atmosphere.",
+    features: [
+      "Hot meal for 480+ students",
+      "Balanced, locally sourced nutrition",
+      "Clean, supervised dining space",
+      "No child goes home hungry",
+    ],
   },
 ];
 
@@ -141,7 +198,8 @@ function Hero() {
             Spaces that inspire <span className="italic text-secondary">modern learning.</span>
           </h1>
           <p className="mt-6 text-lg md:text-xl text-white/85 max-w-2xl">
-            From a cozy library to air-conditioned smart classrooms, every corner of Balo English Medium School is built to help children learn with comfort, curiosity, and confidence.
+            From a cozy library to air-conditioned smart classrooms, every corner of Balo English
+            Medium School is built to help children learn with comfort, curiosity, and confidence.
           </p>
         </motion.div>
       </div>
@@ -202,7 +260,8 @@ function FacilitiesGrid() {
             World-class facilities for every curious mind.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            We combine traditional teaching with modern infrastructure so that our students get the best of both worlds — free of cost.
+            We combine traditional teaching with modern infrastructure so that our students get the
+            best of both worlds — free of cost.
           </p>
         </motion.div>
 
@@ -273,7 +332,8 @@ function CTA() {
           Want to see our classrooms in person?
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Families are welcome to visit Balo English Medium School and experience our facilities firsthand.
+          Families are welcome to visit Balo English Medium School and experience our facilities
+          firsthand.
         </p>
         <a
           href="/#contact"

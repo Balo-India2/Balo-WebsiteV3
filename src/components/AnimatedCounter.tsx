@@ -23,12 +23,16 @@ export function AnimatedCounter({ to, suffix = "", duration = 1.8, className }: 
       ease: [0.16, 1, 0.3, 1],
     });
     const unsub = rounded.on("change", (v) => setDisplay(v));
-    return () => { controls.stop(); unsub(); };
+    return () => {
+      controls.stop();
+      unsub();
+    };
   }, [inView, to, duration, value, rounded]);
 
   return (
     <motion.span ref={ref} className={className}>
-      {display}{suffix}
+      {display}
+      {suffix}
     </motion.span>
   );
 }

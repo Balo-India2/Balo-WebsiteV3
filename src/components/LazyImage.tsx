@@ -15,8 +15,15 @@ export function LazyImage({ wrapperClassName, className, onLoad, alt = "", ...re
         {...rest}
         alt={alt}
         loading={rest.loading ?? "lazy"}
-        onLoad={(e) => { setLoaded(true); onLoad?.(e); }}
-        className={cn("transition-opacity duration-500", loaded ? "opacity-100" : "opacity-0", className)}
+        onLoad={(e) => {
+          setLoaded(true);
+          onLoad?.(e);
+        }}
+        className={cn(
+          "transition-opacity duration-500",
+          loaded ? "opacity-100" : "opacity-0",
+          className,
+        )}
       />
     </div>
   );
