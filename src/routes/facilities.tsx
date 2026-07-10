@@ -2,15 +2,29 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
-  BookOpen, Monitor, FlaskConical, Presentation, Wind, Stethoscope, UtensilsCrossed, CheckCircle2,
+  BookOpen,
+  Monitor,
+  FlaskConical,
+  Presentation,
+  Wind,
+  Stethoscope,
+  UtensilsCrossed,
+  CheckCircle2,
 } from "lucide-react";
 
 import library from "@/assets/library.jpg";
+import libraryTree from "@/assets/img-library-tree.jpg";
 import computerLab from "@/assets/computer-lab.jpg";
-import scienceLab from "@/assets/science-lab.jpg";
+import computerLab2 from "@/assets/drive3-05.jpg";
+import scienceExp1 from "@/assets/img-science-exp-a.jpg";
+import scienceExp2 from "@/assets/drive3-20-1.jpg";
+import scienceExp3 from "@/assets/img-science-exp-b.jpg";
 import smartClassAsset from "@/assets/smart-class-new.jpg";
+import smartClass2 from "@/assets/drive3-04.jpg";
 import acClassroom from "@/assets/ac-classroom.jpg";
+import acClassroom2 from "@/assets/drive3-21.jpg";
 import healthcareAsset from "@/assets/healthcare.jpg";
+import healthcare2 from "@/assets/drive3-12.jpg";
 import mealAsset from "@/assets/meal.jpg";
 import lunchMeal from "@/assets/lunch-meal.jpg";
 import hero from "@/assets/classroom-reading.jpg";
@@ -18,14 +32,28 @@ import hero from "@/assets/classroom-reading.jpg";
 const smartClass = smartClassAsset;
 const healthcare = healthcareAsset;
 const mealSlides = [mealAsset, lunchMeal];
+const librarySlides = [library, libraryTree];
+const computerSlides = [computerLab, computerLab2];
+const scienceSlides = [scienceExp1, scienceExp2, scienceExp3];
+const smartSlides = [smartClassAsset, smartClass2];
+const acSlides = [acClassroom, acClassroom2];
+const healthcareSlides = [healthcareAsset, healthcare2];
 
 export const Route = createFileRoute("/facilities")({
   head: () => ({
     meta: [
       { title: "Facilities — Balo English Medium School, Howrah" },
-      { name: "description", content: "Explore Balo English Medium School's modern facilities: library, computer lab, science laboratory, smart classes, and air-conditioned classrooms." },
+      {
+        name: "description",
+        content:
+          "Explore Balo English Medium School's modern facilities: library, computer lab, science laboratory, smart classes, and air-conditioned classrooms.",
+      },
       { property: "og:title", content: "Facilities — Balo English Medium School" },
-      { property: "og:description", content: "Library, computer lab, science laboratory, smart classes, and AC classrooms at Balo English Medium School, Howrah." },
+      {
+        property: "og:description",
+        content:
+          "Library, computer lab, science laboratory, smart classes, and AC classrooms at Balo English Medium School, Howrah.",
+      },
       { property: "og:image", content: smartClass },
     ],
     links: [{ rel: "canonical", href: "/facilities" }],
@@ -47,51 +75,99 @@ const facilities = [
     icon: BookOpen,
     title: "Library",
     image: library,
-    description: "A warm, inviting space filled with storybooks, reference materials, and periodicals. Our library encourages every child to read for joy and discovery.",
-    features: ["Age-graded reading corners", "Bengali & English collections", "Daily reading periods", "Librarian-guided sessions"],
+    carousel: librarySlides,
+    description:
+      "A warm, inviting space filled with storybooks, reference materials, and periodicals. Our library encourages every child to read for joy and discovery.",
+    features: [
+      "Age-graded reading corners",
+      "Bengali & English collections",
+      "Daily reading periods",
+      "Librarian-guided sessions",
+    ],
   },
   {
     icon: Monitor,
     title: "Computer Lab",
     image: computerLab,
-    description: "A modern computer lab where students learn typing, coding basics, digital literacy, and safe internet practices from an early age.",
-    features: ["Updated desktop computers", "Coding & typing programs", "Project-based learning", "Teacher-supervised browsing"],
+    carousel: computerSlides,
+    description:
+      "A modern computer lab where students learn typing, coding basics, digital literacy, and safe internet practices from an early age.",
+    features: [
+      "Updated desktop computers",
+      "Coding & typing programs",
+      "Project-based learning",
+      "Teacher-supervised browsing",
+    ],
   },
   {
     icon: FlaskConical,
     title: "Science Laboratory",
-    image: scienceLab,
-    description: "Our science lab turns textbooks into hands-on experiments. Students observe, measure, mix, and discover the principles of physics, chemistry, and biology.",
-    features: ["Lab tables & safety equipment", "Microscopes & specimens", "Experiment kits", "Guided practical classes"],
+    image: scienceExp1,
+    carousel: scienceSlides,
+    description:
+      "Our science lab turns textbooks into hands-on experiments. Students observe, measure, mix, and discover the principles of physics, chemistry, and biology.",
+    features: [
+      "Lab tables & safety equipment",
+      "Microscopes & specimens",
+      "Experiment kits",
+      "Guided practical classes",
+    ],
   },
   {
     icon: Presentation,
     title: "Smart Classes",
     image: smartClass,
-    description: "Interactive whiteboards, projectors, and multimedia lessons bring concepts to life. Smart classes make learning visual, engaging, and memorable.",
-    features: ["Interactive digital boards", "Projector & audio systems", "Animated lesson modules", "Tablet-assisted activities"],
+    carousel: smartSlides,
+    description:
+      "Interactive whiteboards, projectors, and multimedia lessons bring concepts to life. Smart classes make learning visual, engaging, and memorable.",
+    features: [
+      "Interactive digital boards",
+      "Projector & audio systems",
+      "Animated lesson modules",
+      "Tablet-assisted activities",
+    ],
   },
   {
     icon: Wind,
     title: "Air-Conditioned Classrooms",
     image: acClassroom,
-    description: "Comfortable, climate-controlled classrooms help students stay focused and alert through Howrah's warmest months.",
-    features: ["Ceiling & split AC units", "Bright LED lighting", "Spacious seating", "Clean, ventilated rooms"],
+    carousel: acSlides,
+    description:
+      "Comfortable, climate-controlled classrooms help students stay focused and alert through Howrah's warmest months.",
+    features: [
+      "Ceiling & split AC units",
+      "Bright LED lighting",
+      "Spacious seating",
+      "Clean, ventilated rooms",
+    ],
   },
   {
     icon: Stethoscope,
     title: "Free Health Care",
     image: healthcare,
-    description: "Every student has access to free, on-campus health check-ups and basic medical care. Our visiting doctor monitors growth, treats minor illnesses, and ensures no child misses school for lack of care.",
-    features: ["Regular health check-ups", "First aid & basic medicines", "Vision & dental screening", "Doctor on call"],
+    carousel: healthcareSlides,
+    description:
+      "Every student has access to free, on-campus health check-ups and basic medical care. Our visiting doctor monitors growth, treats minor illnesses, and ensures no child misses school for lack of care.",
+    features: [
+      "Regular health check-ups",
+      "First aid & basic medicines",
+      "Vision & dental screening",
+      "Doctor on call",
+    ],
   },
   {
     icon: UtensilsCrossed,
     title: "Meal after Classes",
     image: mealAsset,
     carousel: mealSlides,
-    description: "A nutritious, hot meal is served to every student after classes. For many children, this is their most important meal of the day — shared with friends in a warm, communal atmosphere.",
-    features: ["Hot meal for 480+ students", "Balanced, locally sourced nutrition", "Clean, supervised dining space", "No child goes home hungry"],
+    description:
+      "A nutritious, hot meal is served to every student after classes. For many children, this is their most important meal of the day — shared with friends in a warm, communal atmosphere.",
+    features: [
+      "Hot meal for 480+ students",
+      "Balanced, locally sourced nutrition",
+      "Clean, supervised dining space",
+      "No child goes home hungry",
+    ],
   },
 ];
 
@@ -122,7 +198,8 @@ function Hero() {
             Spaces that inspire <span className="italic text-secondary">modern learning.</span>
           </h1>
           <p className="mt-6 text-lg md:text-xl text-white/85 max-w-2xl">
-            From a cozy library to air-conditioned smart classrooms, every corner of Balo English Medium School is built to help children learn with comfort, curiosity, and confidence.
+            From a cozy library to air-conditioned smart classrooms, every corner of Balo English
+            Medium School is built to help children learn with comfort, curiosity, and confidence.
           </p>
         </motion.div>
       </div>
@@ -172,7 +249,7 @@ function FacilitiesGrid() {
         <motion.div
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true }}
+          viewport={{ once: false, amount: 0.2 }}
           variants={fadeUp}
           className="max-w-3xl mb-16"
         >
@@ -183,7 +260,8 @@ function FacilitiesGrid() {
             World-class facilities for every curious mind.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            We combine traditional teaching with modern infrastructure so that our students get the best of both worlds — free of cost.
+            We combine traditional teaching with modern infrastructure so that our students get the
+            best of both worlds — free of cost.
           </p>
         </motion.div>
 
@@ -193,7 +271,7 @@ function FacilitiesGrid() {
               key={f.title}
               initial="hidden"
               whileInView="show"
-              viewport={{ once: true }}
+              viewport={{ once: false, amount: 0.2 }}
               variants={fadeUp}
               custom={i}
               whileHover={{ y: -8 }}
@@ -246,7 +324,7 @@ function CTA() {
       <motion.div
         initial="hidden"
         whileInView="show"
-        viewport={{ once: true }}
+        viewport={{ once: false, amount: 0.2 }}
         variants={fadeUp}
         className="max-w-4xl mx-auto text-center"
       >
@@ -254,7 +332,8 @@ function CTA() {
           Want to see our classrooms in person?
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Families are welcome to visit Balo English Medium School and experience our facilities firsthand.
+          Families are welcome to visit Balo English Medium School and experience our facilities
+          firsthand.
         </p>
         <a
           href="/#contact"

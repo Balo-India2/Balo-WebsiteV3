@@ -8,11 +8,13 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Nav } from "../components/Nav";
+import { AnnouncementBanner } from "../components/AnnouncementBanner";
+import { LoadingScreen } from "../components/LoadingScreen";
 import { Footer } from "../components/Footer";
 import { LanguageProvider } from "../lib/i18n";
 
@@ -89,7 +91,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -115,20 +120,35 @@ function RootShell({ children }: { children: ReactNode }) {
 function HashScroller() {
   const hash = useRouterState({ select: (s) => s.location.hash });
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const prevPath = useRef(pathname);
 
   useEffect(() => {
-    if (!hash) return;
-    const id = hash.replace(/^#/, "");
-    // Wait two frames so the target section has mounted before scrolling
-    const raf = requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        const top = el.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top, behavior: "smooth" });
+    // Hash: smooth-scroll to the anchor once the target has mounted.
+    if (hash) {
+      const id = hash.replace(/^#/, "");
+      const raf = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          const top = el.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top, behavior: "smooth" });
+        });
       });
-    });
-    return () => cancelAnimationFrame(raf);
+      return () => cancelAnimationFrame(raf);
+    }
+
+    // Real page change (not just search-param updates): scroll to top AFTER
+    // the page-entry animation has had time to play (~450ms) so animations
+    // trigger from a static top position instead of immediately during nav.
+    // Browser back/forward is handled by the router's built-in
+    // scrollRestoration, which fires before this effect runs.
+    if (prevPath.current !== pathname) {
+      prevPath.current = pathname;
+      const t = window.setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "auto" });
+      }, 450);
+      return () => window.clearTimeout(t);
+    }
   }, [pathname, hash]);
 
   return null;
@@ -136,14 +156,28 @@ function HashScroller() {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isAdminRoute = pathname.startsWith("/admin");
+  const [ready, setReady] = useState(false);
+
+  // Keep initial content mounted OFF-DOM while the splash is up so page
+  // entry animations begin AFTER the splash fades — not underneath it.
+  useEffect(() => {
+    const t = window.setTimeout(() => setReady(true), 1650);
+    return () => window.clearTimeout(t);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
-        <Nav />
+        <LoadingScreen />
+        {!isAdminRoute && <Nav />}
+        {!isAdminRoute && <AnnouncementBanner />}
         <HashScroller />
-        <Outlet />
-        <Footer />
+        <div className={isAdminRoute ? "" : "pt-9"}>
+          {ready ? <Outlet /> : <div style={{ minHeight: "100vh" }} aria-hidden />}
+        </div>
+        {!isAdminRoute && <Footer />}
       </LanguageProvider>
     </QueryClientProvider>
   );

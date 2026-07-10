@@ -2,15 +2,36 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import {
-  Trophy, Sun, Activity, PartyPopper, Music, Calendar, MapPin, ArrowRight,
+  Trophy,
+  Sun,
+  Activity,
+  PartyPopper,
+  Music,
+  Sparkles,
+  Calendar,
+  MapPin,
+  ArrowRight,
 } from "lucide-react";
 
 import sportsDay from "@/assets/sports-day.jpg";
-import summerCamp from "@/assets/summer-camp.jpg";
+import summerCamp3 from "@/assets/drive3-24.jpg";
+import summer25a from "@/assets/summer25-new-01.jpg";
+import summer25b from "@/assets/summer25-new-02.jpg";
+import summer26a from "@/assets/summer26-new-01.jpg";
+import summer26b from "@/assets/summer26-new-02.jpg";
+import summer26c from "@/assets/summer26-new-03.jpg";
 import rugby from "@/assets/rugby.jpg";
+import footballNew from "@/assets/sports-football.jpg";
 import funFiesta from "@/assets/fun-fiesta.jpg";
+import funFiestaA from "@/assets/funfiesta-new-01.jpg";
+import funFiestaB from "@/assets/funfiesta-new-02.jpg";
 import musicAsset from "@/assets/music.jpg";
+import musicNew from "@/assets/music-new.jpg";
+import dance1 from "@/assets/dance-new-1.jpg";
+import dance2 from "@/assets/dance-new-2.jpg";
+import dance3 from "@/assets/dance-new-3.jpg";
 import hero from "@/assets/playground.jpg";
+import { MediaCarousel } from "@/components/MediaCarousel";
 
 const music = musicAsset;
 
@@ -18,9 +39,17 @@ export const Route = createFileRoute("/extracurricular")({
   head: () => ({
     meta: [
       { title: "Extracurricular Activities — Balo English Medium School, Howrah" },
-      { name: "description", content: "Discover sports day, summer camp, football, and fun fiesta at Balo English Medium School — where learning extends beyond the classroom." },
+      {
+        name: "description",
+        content:
+          "Discover sports day, summer camp, football, dance, music, and fun fiesta at Balo English Medium School — where learning extends beyond the classroom.",
+      },
       { property: "og:title", content: "Extracurricular Activities — Balo English Medium School" },
-      { property: "og:description", content: "Sports day, summer camp, football, and fun fiesta at Balo English Medium School, Howrah." },
+      {
+        property: "og:description",
+        content:
+          "Sports day, summer camp, football, dance, music, and fun fiesta at Balo English Medium School, Howrah.",
+      },
       { property: "og:image", content: sportsDay },
     ],
     links: [{ rel: "canonical", href: "/extracurricular" }],
@@ -37,46 +66,100 @@ const fadeUp = {
   }),
 };
 
-const activities = [
+type Activity = {
+  icon: typeof Trophy;
+  title: string;
+  image: string;
+  carousel?: string[];
+  season: string;
+  description: string;
+  highlights: string[];
+};
+
+const activities: Activity[] = [
   {
     icon: Trophy,
     title: "Sports Day",
     image: sportsDay,
     season: "Annual Event",
-    description: "Our Annual Sports Day is the highlight of the year. Children compete in races, relays, sack races, and team games, learning sportsmanship, discipline, and the joy of movement.",
-    highlights: ["Track & field races", "Team games", "House competitions", "Medals & certificates"],
+    description:
+      "Our Annual Sports Day is the highlight of the year. Children compete in races, relays, sack races, and team games, learning sportsmanship, discipline, and the joy of movement.",
+    highlights: [
+      "Track & field races",
+      "Team games",
+      "House competitions",
+      "Medals & certificates",
+    ],
   },
   {
     icon: Sun,
     title: "Summer Camp",
-    image: summerCamp,
+    image: summer26a,
+    carousel: [summer26a, summer26b, summer26c, summer25a, summer25b, summerCamp3],
     season: "Summer Break",
-    description: "During summer break, our campus transforms into a creative playground. Students enjoy art, crafts, storytelling, music, dance, and outdoor adventures in a safe, supervised environment.",
+    description:
+      "During summer break, our campus transforms into a creative playground. Students enjoy art, crafts, storytelling, music, dance, and outdoor adventures in a safe, supervised environment.",
     highlights: ["Arts & crafts", "Music & dance", "Storytelling sessions", "Outdoor exploration"],
   },
   {
     icon: Activity,
     title: "Football",
     image: rugby,
+    carousel: [rugby, footballNew],
     season: "Year-round Training",
-    description: "Football builds strength, teamwork, and resilience. Our boys train regularly and play friendly matches, learning fair play and the joy of being part of a team.",
-    highlights: ["Weekly practice sessions", "Boys' team participation", "Fitness & coordination", "Inter-school matches"],
+    description:
+      "Football builds strength, teamwork, and resilience. Our boys train regularly and play friendly matches, learning fair play and the joy of being part of a team.",
+    highlights: [
+      "Weekly practice sessions",
+      "Boys' team participation",
+      "Fitness & coordination",
+      "Inter-school matches",
+    ],
   },
   {
     icon: PartyPopper,
     title: "Fun Fiesta",
     image: funFiesta,
+    carousel: [funFiesta, funFiestaA, funFiestaB],
     season: "Annual Carnival",
-    description: "Fun Fiesta is our annual carnival filled with games, rides, food stalls, performances, and laughter. It brings students, families, and teachers together to celebrate community.",
-    highlights: ["Carnival games & rides", "Student performances", "Food stalls", "Family-friendly fun"],
+    description:
+      "Fun Fiesta is our annual carnival filled with games, rides, food stalls, performances, and laughter. It brings students, families, and teachers together to celebrate community.",
+    highlights: [
+      "Carnival games & rides",
+      "Student performances",
+      "Food stalls",
+      "Family-friendly fun",
+    ],
   },
   {
     icon: Music,
     title: "Music",
     image: music,
+    carousel: [musicNew, music],
     season: "Weekly Sessions",
-    description: "Students learn vocals and harmonium under the guidance of our music teacher. Music classes nurture rhythm, confidence, and a lifelong love for the arts.",
-    highlights: ["Harmonium & vocal training", "Choir & group singing", "Cultural performances", "Festival celebrations"],
+    description:
+      "Students learn vocals and harmonium under the guidance of our music teacher. Music classes nurture rhythm, confidence, and a lifelong love for the arts.",
+    highlights: [
+      "Harmonium & vocal training",
+      "Choir & group singing",
+      "Cultural performances",
+      "Festival celebrations",
+    ],
+  },
+  {
+    icon: Sparkles,
+    title: "Dance",
+    image: dance1,
+    carousel: [dance1, dance2, dance3],
+    season: "Cultural Programme",
+    description:
+      "Dance at Balo helps children move with confidence, express feelings without words, and celebrate every festival together. Students learn choreography for annual events, cultural days, and school celebrations.",
+    highlights: [
+      "Group choreography",
+      "Festival performances",
+      "Confidence & stage presence",
+      "Team coordination",
+    ],
   },
 ];
 
@@ -107,7 +190,8 @@ function Hero() {
             Learning beyond the <span className="italic text-secondary">classroom.</span>
           </h1>
           <p className="mt-6 text-lg md:text-xl text-white/85 max-w-2xl">
-            At Balo English Medium School, sports, camps, and celebrations are part of the curriculum. We believe happy, active children become confident, well-rounded adults.
+            At Balo English Medium School, sports, camps, and celebrations are part of the
+            curriculum. We believe happy, active children become confident, well-rounded adults.
           </p>
         </motion.div>
       </div>
@@ -122,7 +206,7 @@ function ActivitiesGrid() {
         <motion.div
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true }}
+          viewport={{ once: false, amount: 0.2 }}
           variants={fadeUp}
           className="max-w-3xl mb-16"
         >
@@ -133,7 +217,8 @@ function ActivitiesGrid() {
             Four events our students never forget.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            From the thrill of Sports Day to the creativity of Summer Camp, these programs shape character, friendships, and lifelong memories.
+            From the thrill of Sports Day to the creativity of Summer Camp, these programs shape
+            character, friendships, and lifelong memories.
           </p>
         </motion.div>
 
@@ -143,21 +228,25 @@ function ActivitiesGrid() {
               key={a.title}
               initial="hidden"
               whileInView="show"
-              viewport={{ once: true }}
+              viewport={{ once: false, amount: 0.2 }}
               variants={fadeUp}
               custom={i}
               whileHover={{ y: -6 }}
               className="group rounded-3xl bg-card border border-border shadow-soft overflow-hidden"
             >
               <div className="aspect-[16/10] overflow-hidden">
-                <img
-                  src={a.image}
-                  alt={a.title}
-                  width={1280}
-                  height={900}
-                  loading="lazy"
-                  className="size-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
+                {a.carousel ? (
+                  <MediaCarousel images={a.carousel} title={a.title} aspect="aspect-[16/10]" />
+                ) : (
+                  <img
+                    src={a.image}
+                    alt={a.title}
+                    width={1280}
+                    height={900}
+                    loading="lazy"
+                    className="size-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                )}
               </div>
               <div className="p-6 md:p-8">
                 <div className="flex items-center justify-between mb-3">
@@ -197,7 +286,7 @@ function JoinCTA() {
       <motion.div
         initial="hidden"
         whileInView="show"
-        viewport={{ once: true }}
+        viewport={{ once: false, amount: 0.2 }}
         variants={fadeUp}
         className="max-w-5xl mx-auto rounded-[2rem] gradient-warm border border-border p-10 md:p-16 text-center shadow-card"
       >
@@ -205,10 +294,12 @@ function JoinCTA() {
           <MapPin className="size-4" /> Salkia, Howrah
         </div>
         <h2 className="text-4xl md:text-6xl font-bold text-balance leading-tight">
-          Every child deserves a place to <span className="text-accent italic">play, grow, and shine.</span>
+          Every child deserves a place to{" "}
+          <span className="text-accent italic">play, grow, and shine.</span>
         </h2>
         <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
-          Enrol your child at Balo English Medium School and give them access to academics, sports, arts, and community life — all free of cost.
+          Enrol your child at Balo English Medium School and give them access to academics, sports,
+          arts, and community life — all free of cost.
         </p>
         <a
           href="/#contact"

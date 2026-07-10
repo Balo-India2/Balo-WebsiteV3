@@ -3,14 +3,22 @@ import { motion } from "framer-motion";
 import { Code2, Code, Heart, Sparkles } from "lucide-react";
 
 import developers from "@/assets/developers-new.jpg";
+import banner from "@/assets/developers-banner-code.jpg";
 
 export const Route = createFileRoute("/developers")({
   head: () => ({
     meta: [
       { title: "Developers — Balo English Medium School" },
-      { name: "description", content: "Meet the developers behind the Balo English Medium School website: Rehan Jamil, Shahil Sharma, and Shibran Khatoon." },
+      {
+        name: "description",
+        content:
+          "Meet the developers behind the Balo English Medium School website: Rehan Jamil, Shahil Sharma, and Shibran Khatoon.",
+      },
       { property: "og:title", content: "Developers — Balo English Medium School" },
-      { property: "og:description", content: "The team that built this website with love for Balo English Medium School." },
+      {
+        property: "og:description",
+        content: "The team that built this website with love for Balo English Medium School.",
+      },
       { property: "og:image", content: developers },
     ],
     links: [{ rel: "canonical", href: "/developers" }],
@@ -37,13 +45,13 @@ const team = [
   {
     name: "Shahil Sharma",
     role: "Developer",
-    note: "The one in the white and brown shirt — engineering & integration.",
+    note: "The one in the white and brown shirt — designing and development.",
     color: "from-accent to-secondary",
   },
   {
     name: "Shibran Khatoon",
     role: "Developer",
-    note: "The one in the brown dress — content & UX.",
+    note: "The one in the brown dress — Designing and gallery Management.",
     color: "from-secondary to-primary",
   },
 ];
@@ -51,11 +59,13 @@ const team = [
 function DevelopersPage() {
   return (
     <main className="pt-24">
-      <section className="relative py-20 px-6 gradient-hero text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-15" style={{
-          backgroundImage: "radial-gradient(circle at 20% 20%, white 1px, transparent 1px), radial-gradient(circle at 80% 60%, white 1px, transparent 1px)",
-          backgroundSize: "40px 40px, 60px 60px",
-        }} />
+      <section className="relative min-h-[55vh] flex items-center py-20 px-6 text-white overflow-hidden">
+        <img
+          src={banner}
+          alt="Developer workstation with code on screen"
+          className="absolute inset-0 size-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/75 to-accent/80" />
         <div className="relative max-w-5xl mx-auto text-center">
           <motion.div initial="hidden" animate="show" variants={fadeUp}>
             <div className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur px-4 py-1.5 text-xs font-semibold mb-6">
@@ -65,7 +75,8 @@ function DevelopersPage() {
               Meet the <span className="italic text-secondary">developers.</span>
             </h1>
             <p className="mt-6 text-lg md:text-xl text-white/85 max-w-2xl mx-auto">
-              Three young minds who designed and built this website to share Balo English Medium School's story with the world.
+              Students and contributors from India who designed and built this website to share Balo
+              English Medium School's story with the world.
             </p>
           </motion.div>
         </div>
@@ -76,7 +87,7 @@ function DevelopersPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.9 }}
             className="relative"
           >
@@ -97,7 +108,12 @@ function DevelopersPage() {
             </motion.div>
           </motion.div>
 
-          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp}>
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={fadeUp}
+          >
             <div className="text-xs uppercase tracking-[0.2em] text-accent font-bold mb-4">
               The Team
             </div>
@@ -105,7 +121,9 @@ function DevelopersPage() {
               Code with care, design with heart.
             </h2>
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-              This website was crafted by three developers who wanted to give Balo English Medium School a beautiful digital home — so every parent, donor, and well-wisher can see what the school does for the children of Salkia.
+              This website was crafted by three developers who wanted to give Balo English Medium
+              School a beautiful digital home — so every parent, donor, and well-wisher can see what
+              the school does for the children of Salkia.
             </p>
 
             <div className="mt-10 space-y-4">
@@ -114,18 +132,25 @@ function DevelopersPage() {
                   key={m.name}
                   initial="hidden"
                   whileInView="show"
-                  viewport={{ once: true }}
+                  viewport={{ once: false, amount: 0.2 }}
                   variants={fadeUp}
                   custom={i}
                   whileHover={{ scale: 1.05, y: -4 }}
                   className="flex items-center gap-4 p-5 rounded-2xl bg-card border border-border shadow-soft"
                 >
-                  <div className={`size-14 shrink-0 rounded-2xl bg-gradient-to-br ${m.color} text-white grid place-items-center font-display font-black text-xl`}>
-                    {m.name.split(" ").map(w => w[0]).join("")}
+                  <div
+                    className={`size-14 shrink-0 rounded-2xl bg-gradient-to-br ${m.color} text-white grid place-items-center font-display font-black text-xl`}
+                  >
+                    {m.name
+                      .split(" ")
+                      .map((w) => w[0])
+                      .join("")}
                   </div>
                   <div className="flex-1">
                     <div className="font-display text-lg font-bold">{m.name}</div>
-                    <div className="text-xs uppercase tracking-widest text-accent font-semibold mt-0.5">{m.role}</div>
+                    <div className="text-xs uppercase tracking-widest text-accent font-semibold mt-0.5">
+                      {m.role}
+                    </div>
                     <div className="text-sm text-muted-foreground mt-1">{m.note}</div>
                   </div>
                   <Code className="size-5 text-muted-foreground/40" />
@@ -136,9 +161,12 @@ function DevelopersPage() {
             <div className="mt-10 p-6 rounded-2xl gradient-warm border border-border">
               <Heart className="size-6 text-accent mb-3" />
               <p className="text-sm italic text-foreground/80 leading-relaxed">
-                "We built this site as our way of saying thank you to a school that proves education and love can change a neighbourhood."
+                "We built this site as our way of saying thank you to a school that proves education
+                and love can change a neighbourhood."
               </p>
-              <div className="mt-3 text-xs tracking-widest uppercase text-muted-foreground font-semibold">— The Dev Team</div>
+              <div className="mt-3 text-xs tracking-widest uppercase text-muted-foreground font-semibold">
+                — The Dev Team
+              </div>
             </div>
           </motion.div>
         </div>
@@ -146,7 +174,13 @@ function DevelopersPage() {
 
       <section className="py-24 px-6 bg-card">
         <div className="max-w-5xl mx-auto">
-          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp} className="max-w-2xl mb-12">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={fadeUp}
+            className="max-w-2xl mb-12"
+          >
             <div className="text-xs uppercase tracking-[0.2em] text-accent font-bold mb-4">
               How We Learned
             </div>
@@ -155,34 +189,26 @@ function DevelopersPage() {
             </h2>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-1 gap-6 max-w-2xl">
             <motion.div
-              initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp}
-              className="p-8 rounded-3xl bg-background border border-border shadow-soft"
-            >
-              <div className="size-12 rounded-2xl bg-primary/10 text-primary grid place-items-center mb-4">
-                <Code2 className="size-6" />
-              </div>
-              <h3 className="font-display text-2xl font-bold mb-3">Workshops with Bosenet</h3>
-              <p className="text-muted-foreground leading-relaxed text-sm">
-                Our coding and web development journey began with hands-on workshops organised by{" "}
-                <a href="https://bosenet.com/index.html#service" target="_blank" rel="noopener noreferrer" className="text-accent font-semibold hover:underline">
-                  Bosenet
-                </a>
-                . Through their structured sessions on HTML, CSS, JavaScript, and modern frameworks, we moved from absolute beginners to building real, working websites — like the one you're reading right now.
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp} custom={1}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: false, amount: 0.2 }}
+              variants={fadeUp}
               className="p-8 rounded-3xl bg-background border border-border shadow-soft"
             >
               <div className="size-12 rounded-2xl bg-accent/10 text-accent grid place-items-center mb-4">
                 <Sparkles className="size-6" />
               </div>
-              <h3 className="font-display text-2xl font-bold mb-3">Weekly Sessions with Mr Samuel Clay</h3>
+              <h3 className="font-display text-2xl font-bold mb-3">
+                Weekly Sessions with Mr Samuel Clay
+              </h3>
               <p className="text-muted-foreground leading-relaxed text-sm">
-                We are also mentored by <strong>Mr Samuel Clay</strong>, a software engineer at Amazon based in the United Kingdom. Every week, he takes time out of his schedule to run live sessions with us — reviewing code, teaching engineering best practices, and patiently answering every question. His weekly guidance has shaped how we think, build, and ship software.
+                We are mentored by <strong>Mr Samuel Clay</strong>, a software engineer at Amazon
+                based in the United Kingdom. Every week, he takes time out of his schedule to run
+                live sessions with us — reviewing code, teaching engineering best practices, and
+                patiently answering every question. His weekly guidance has shaped how we think,
+                build, and ship software.
               </p>
             </motion.div>
           </div>
