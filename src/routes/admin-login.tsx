@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { Lock, Mail, KeyRound, ShieldCheck, RefreshCw, Send } from "lucide-react";
-import { requestAdminApproval, verifyAdminApproval, getAdminStatus } from "@/lib/admin.functions";
+import { requestAdminApproval, getMyApprovalRequest, getAdminStatus } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin-login")({
   ssr: false,
@@ -15,7 +15,7 @@ type Mode = "signin" | "signup" | "reset" | "verify-sent" | "approval";
 function AdminLoginPage() {
   const navigate = useNavigate();
   const requestApproval = useServerFn(requestAdminApproval);
-  const verifyApproval = useServerFn(verifyAdminApproval);
+  const myRequest = useServerFn(getMyApprovalRequest);
   const checkAdmin = useServerFn(getAdminStatus);
 
   const [email, setEmail] = useState("");
@@ -99,25 +99,31 @@ function AdminLoginPage() {
       if (r.alreadyAdmin) { navigate({ to: "/admin" }); return; }
       setMsg({
         kind: "ok",
-        text: r.delivered
-          ? "Approval request sent to the site owner. When they share the code with you, enter it below."
-          : "Approval request created. Email delivery isn't configured yet — ask the site owner to check server logs for the code.",
+        text: "Your request has been sent to the school owner. They will approve it from the admin dashboard — sign in again once approved.",
       });
     } catch (err: any) {
       setMsg({ kind: "err", text: err?.message ?? "Could not request approval." });
     } finally { setBusy(false); }
   }
 
-  async function submitApprovalCode(e: React.FormEvent) {
-    e.preventDefault();
+  async function refreshApprovalStatus() {
     setBusy(true); setMsg(null);
     try {
-      await verifyApproval({ data: { code: code.trim() } });
-      navigate({ to: "/admin" });
+      const status = await checkAdmin();
+      if (status.isAdmin) { navigate({ to: "/admin" }); return; }
+      const req = await myRequest();
+      setMsg(
+        req?.status === "rejected"
+          ? { kind: "err", text: "Your admin request was declined by the owner." }
+          : req?.status === "pending"
+            ? { kind: "ok", text: "Your request is still awaiting the owner's approval." }
+            : { kind: "err", text: "No approval request found yet — send one above." },
+      );
     } catch (err: any) {
-      setMsg({ kind: "err", text: err?.message ?? "Could not verify code." });
+      setMsg({ kind: "err", text: err?.message ?? "Could not check status." });
     } finally { setBusy(false); }
   }
+
 
   return (
     <div className="min-h-screen grid place-items-center bg-background px-6 py-12">
@@ -133,7 +139,7 @@ function AdminLoginPage() {
           {mode === "signup" && "Create an account. You'll need to verify your email, then request admin approval from the site owner."}
           {mode === "reset" && "Enter your email to receive a password reset link."}
           {mode === "verify-sent" && "We sent you a link. Click it to activate your account, then come back and sign in."}
-          {mode === "approval" && "Request an approval code — the site owner will share a 6-digit code with you. Enter it below to activate admin access."}
+          {mode === "approval" && "Send an access request — the school owner approves admins from the dashboard. You'll get access as soon as they approve."}
         </p>
 
         {mode === "approval" ? (
@@ -146,29 +152,18 @@ function AdminLoginPage() {
             >
               <Send className="size-4" /> Send approval request to owner
             </button>
-            <form onSubmit={submitApprovalCode} className="space-y-3">
-              <label className="block">
-                <span className="text-xs font-semibold text-muted-foreground">Approval code (6 digits)</span>
-                <div className="mt-1 relative">
-                  <ShieldCheck className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    inputMode="numeric" pattern="[0-9]*" required value={code}
-                    onChange={(e) => setCode(e.target.value)} minLength={4} maxLength={12}
-                    className="w-full rounded-md border border-input bg-background pl-9 pr-3 py-2 text-sm tracking-widest text-center font-mono"
-                    placeholder="••••••"
-                  />
-                </div>
-              </label>
-              {msg && (
-                <div className={`text-sm rounded-md p-3 ${msg.kind === "err" ? "bg-destructive/10 text-destructive" : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"}`}>
-                  {msg.text}
-                </div>
-              )}
-              <button type="submit" disabled={busy}
-                className="w-full rounded-md bg-primary text-primary-foreground py-2.5 text-sm font-semibold disabled:opacity-50">
-                {busy ? "Please wait…" : "Activate admin access"}
-              </button>
-            </form>
+            {msg && (
+              <div className={`text-sm rounded-md p-3 ${msg.kind === "err" ? "bg-destructive/10 text-destructive" : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"}`}>
+                {msg.text}
+              </div>
+            )}
+            <button
+              type="button" onClick={refreshApprovalStatus} disabled={busy}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-primary text-primary-foreground py-2.5 text-sm font-semibold disabled:opacity-50"
+            >
+              <ShieldCheck className="size-4" /> {busy ? "Please wait…" : "Check approval status"}
+            </button>
+
             <button
               type="button" onClick={async () => { await supabase.auth.signOut(); setMode("signin"); setMsg(null); }}
               className="w-full text-xs text-muted-foreground hover:underline"

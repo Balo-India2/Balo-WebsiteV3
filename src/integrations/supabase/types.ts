@@ -16,31 +16,40 @@ export type Database = {
     Tables: {
       admin_approval_requests: {
         Row: {
-          code_hash: string
+          code_hash: string | null
           created_at: string
           email: string
-          expires_at: string
+          expires_at: string | null
           id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
           updated_at: string
           used_at: string | null
           user_id: string
         }
         Insert: {
-          code_hash: string
+          code_hash?: string | null
           created_at?: string
           email: string
-          expires_at: string
+          expires_at?: string | null
           id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
           updated_at?: string
           used_at?: string | null
           user_id: string
         }
         Update: {
-          code_hash?: string
+          code_hash?: string | null
           created_at?: string
           email?: string
-          expires_at?: string
+          expires_at?: string | null
           id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
           updated_at?: string
           used_at?: string | null
           user_id?: string
@@ -61,6 +70,235 @@ export type Database = {
           email?: string
         }
         Relationships: []
+      }
+      ai_classes: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ai_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          mode: Database["public"]["Enums"]["ai_mode"]
+          session_key: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mode: Database["public"]["Enums"]["ai_mode"]
+          session_key: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mode?: Database["public"]["Enums"]["ai_mode"]
+          session_key?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      ai_documents: {
+        Row: {
+          created_at: string
+          doc_type: string
+          extracted_text: string | null
+          file_path: string | null
+          id: string
+          is_active: boolean
+          mode: Database["public"]["Enums"]["ai_mode"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          doc_type?: string
+          extracted_text?: string | null
+          file_path?: string | null
+          id?: string
+          is_active?: boolean
+          mode?: Database["public"]["Enums"]["ai_mode"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          doc_type?: string
+          extracted_text?: string | null
+          file_path?: string | null
+          id?: string
+          is_active?: boolean
+          mode?: Database["public"]["Enums"]["ai_mode"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ai_knowledge: {
+        Row: {
+          category: string
+          content: string
+          created_at: string
+          id: string
+          is_active: boolean
+          mode: Database["public"]["Enums"]["ai_mode"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          content: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          mode?: Database["public"]["Enums"]["ai_mode"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          mode?: Database["public"]["Enums"]["ai_mode"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ai_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          image_url: string | null
+          mode: Database["public"]["Enums"]["ai_mode"]
+          role: string
+          sources: Json | null
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          mode: Database["public"]["Enums"]["ai_mode"]
+          role: string
+          sources?: Json | null
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          mode?: Database["public"]["Enums"]["ai_mode"]
+          role?: string
+          sources?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_settings: {
+        Row: {
+          created_at: string
+          id: string
+          is_enabled: boolean
+          mode: Database["public"]["Enums"]["ai_mode"]
+          system_instructions: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          mode: Database["public"]["Enums"]["ai_mode"]
+          system_instructions?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          mode?: Database["public"]["Enums"]["ai_mode"]
+          system_instructions?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ai_subjects: {
+        Row: {
+          class_id: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          class_id?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          class_id?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_subjects_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "ai_classes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       announcements: {
         Row: {
@@ -85,6 +323,42 @@ export type Database = {
           is_published?: boolean
           message?: string
           publish_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      enquiries: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          phone: string | null
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          phone?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          phone?: string | null
+          status?: string
+          subject?: string
           updated_at?: string
         }
         Relationships: []
@@ -154,6 +428,7 @@ export type Database = {
       }
     }
     Enums: {
+      ai_mode: "assistant" | "student"
       app_role: "admin"
     }
     CompositeTypes: {
@@ -282,6 +557,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      ai_mode: ["assistant", "student"],
       app_role: ["admin"],
     },
   },

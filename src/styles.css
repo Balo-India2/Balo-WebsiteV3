@@ -70,3 +70,34 @@
 @utility shadow-soft { box-shadow: var(--shadow-soft); }
 @utility shadow-card { box-shadow: var(--shadow-card); }
 @utility text-balance { text-wrap: balance; }
+
+/* Markdown rendering for BALO AI answers */
+.balo-md > :first-child { margin-top: 0; }
+.balo-md > :last-child { margin-bottom: 0; }
+.balo-md p { margin: 0.5rem 0; }
+.balo-md strong { font-weight: 700; }
+.balo-md ul { list-style: disc; padding-left: 1.15rem; margin: 0.5rem 0; }
+.balo-md ol { list-style: decimal; padding-left: 1.25rem; margin: 0.5rem 0; }
+.balo-md li { margin: 0.2rem 0; }
+.balo-md h1, .balo-md h2, .balo-md h3, .balo-md h4 {
+  font-weight: 700; margin: 0.75rem 0 0.35rem; line-height: 1.25;
+}
+.balo-md h1 { font-size: 1.05rem; }
+.balo-md h2 { font-size: 1rem; }
+.balo-md h3, .balo-md h4 { font-size: 0.95rem; }
+.balo-md code {
+  background: color-mix(in oklab, var(--foreground) 10%, transparent);
+  padding: 0.1rem 0.3rem; border-radius: 0.3rem; font-size: 0.85em;
+}
+.balo-md pre {
+  background: color-mix(in oklab, var(--foreground) 8%, transparent);
+  padding: 0.65rem; border-radius: 0.6rem; overflow-x: auto; margin: 0.5rem 0;
+}
+.balo-md pre code { background: none; padding: 0; }
+.balo-md table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; font-size: 0.85em; }
+.balo-md th, .balo-md td { border: 1px solid var(--border); padding: 0.3rem 0.45rem; text-align: left; }
+.balo-md blockquote {
+  border-left: 3px solid var(--border); padding-left: 0.7rem; margin: 0.5rem 0;
+  color: var(--muted-foreground);
+}
+.balo-md a { text-decoration: underline; }
