@@ -17,6 +17,9 @@ import { AnnouncementBanner } from "../components/AnnouncementBanner";
 import { LoadingScreen } from "../components/LoadingScreen";
 import { Footer } from "../components/Footer";
 import { LanguageProvider } from "../lib/i18n";
+import { BaloAIButton } from "../components/BaloAIButton";
+import { NoticeBell } from "../components/NoticeBell";
+
 
 function NotFoundComponent() {
   return (
@@ -155,6 +158,9 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isAdminRoute = pathname.startsWith("/admin");
+  // BALO AI is a full-screen chat surface: no marquee, no footer.
+  const isChatRoute = pathname.startsWith("/balo-ai");
+  const isBare = isAdminRoute || isChatRoute;
   const [ready, setReady] = useState(false);
 
   // Keep initial content mounted OFF-DOM while the splash is up so page
@@ -169,12 +175,15 @@ function RootComponent() {
       <LanguageProvider>
         <LoadingScreen />
         {!isAdminRoute && <Nav />}
-        {!isAdminRoute && <AnnouncementBanner />}
+        {!isBare && <AnnouncementBanner />}
         <HashScroller />
-        <div className={isAdminRoute ? "" : "pt-9"}>
+        <div className={isBare ? "" : "pt-9"}>
           {ready ? <Outlet /> : <div style={{ minHeight: "100vh" }} aria-hidden />}
         </div>
-        {!isAdminRoute && <Footer />}
+        {!isBare && <Footer />}
+        {ready && <BaloAIButton />}
+        {!isBare && ready && <NoticeBell />}
+
       </LanguageProvider>
     </QueryClientProvider>
   );

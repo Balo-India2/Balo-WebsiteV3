@@ -91,9 +91,29 @@ function AdminLayout() {
           </div>
         </div>
       </header>
+      <div className="border-b border-border bg-card/60">
+        <div className="max-w-6xl mx-auto flex items-center gap-1 px-6 overflow-x-auto">
+          {[
+            { to: "/admin", label: "Dashboard" },
+            { to: "/admin/ai", label: "BALO AI" },
+            { to: "/admin/knowledge", label: "Knowledge base" },
+          ].map((tab) => (
+            <Link
+              key={tab.to}
+              to={tab.to}
+              activeOptions={{ exact: true }}
+              className="whitespace-nowrap border-b-2 border-transparent px-3 py-3 text-sm text-muted-foreground hover:text-foreground"
+              activeProps={{ className: "whitespace-nowrap border-b-2 border-primary px-3 py-3 text-sm font-semibold text-foreground" }}
+            >
+              {tab.label}
+            </Link>
+          ))}
+        </div>
+      </div>
       <main className="max-w-6xl mx-auto px-6 py-8">
         <Outlet />
       </main>
+
     </div>
   );
 }
