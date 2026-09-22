@@ -14,7 +14,7 @@ function AdminLayout() {
   const navigate = useNavigate();
   const checkAdmin = useServerFn(getAdminStatus);
   const [state, setState] = useState<
-    { kind: "loading" } | { kind: "signed-out" } | { kind: "not-admin"; email: string | null } | { kind: "admin"; email: string | null }
+    { kind: "loading" } | { kind: "signed-out" } | { kind: "not-admin"; username: string | null } | { kind: "admin"; username: string | null }
   >({ kind: "loading" });
 
   useEffect(() => {
@@ -26,9 +26,9 @@ function AdminLayout() {
       try {
         const r = await checkAdmin();
         if (!mounted) return;
-        setState(r.isAdmin ? { kind: "admin", email: r.email } : { kind: "not-admin", email: r.email });
+        setState(r.isAdmin ? { kind: "admin", username: r.username } : { kind: "not-admin", username: r.username });
       } catch {
-        if (mounted) setState({ kind: "not-admin", email: null });
+        if (mounted) setState({ kind: "not-admin", username: null });
       }
     };
     check();
@@ -51,7 +51,7 @@ function AdminLayout() {
           <ShieldAlert className="size-12 mx-auto text-destructive mb-4" />
           <h1 className="text-2xl font-bold">Not authorised</h1>
           <p className="mt-2 text-muted-foreground text-sm">
-            {state.email ?? "This account"} is not an admin. Sign in with the admin email.
+            {state.username ?? "This account"} is not an admin. Sign in with an administrator account.
           </p>
           <button
             onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/admin-login" }); }}
@@ -79,7 +79,7 @@ function AdminLayout() {
                 <UserCircle2 className="size-5" />
               </span>
               <span className="hidden sm:inline text-xs font-medium text-foreground/80 max-w-[160px] truncate">
-                {state.email ?? "Admin"}
+                {state.username ?? "Admin"}
               </span>
             </div>
             <button

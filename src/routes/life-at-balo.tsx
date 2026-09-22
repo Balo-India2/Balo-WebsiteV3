@@ -1,16 +1,49 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHero, Section, Reveal, SamplePair, useLightbox } from "@/components/page-kit";
 
-import assembly from "@/assets/raised-hands.jpg";
+import baloBackground from "@/assets/balo-background.jpg";
+import assembly1 from "@/assets/assembly1.jpg";
+import assembly2 from "@/assets/assembly2.jpg";
 import classes1 from "@/assets/classroom-1.jpg";
 import classes2 from "@/assets/teacher-board.jpg";
-import breaktime from "@/assets/playground.jpg";
+import breaktime from "@/assets/break1.jpg";
+import breaktime2 from "@/assets/drive-gallery2-15.jpg";
 import music1 from "@/assets/music.jpg";
 import dance1 from "@/assets/dance-new-1.jpg";
 import prac1 from "@/assets/img-science-exp-a.jpg";
 import prac2 from "@/assets/computer-lab.jpg";
 import lunch1 from "@/assets/meal.jpg";
 import lunch2 from "@/assets/lunch-meal.jpg";
+import yoga1 from "@/assets/yoga1.jpg";
+import yoga2 from "@/assets/yoga2.jpg";
+import ref1 from "@/assets/up-classroom-02.jpg";
+import ref2 from "@/assets/ref2.jpg";
+import nutrition1 from "@/assets/nutrition1.jpg";
+import nutrition2 from "@/assets/nutrition2.jpg";
+
+import hygiene1 from "@/assets/hygiene1.jpg";
+import hygiene2 from "@/assets/hygiene2.jpg";
+
+import water1 from "@/assets/water1.jpg";
+import water2 from "@/assets/water2.jpg";
+
+import rally1 from "@/assets/rally1.jpg";
+import rally2 from "@/assets/rally2.jpg";
+
+import result1 from "@/assets/result1.jpg";
+import result2 from "@/assets/result2.jpg";
+
+import book1 from "@/assets/book1.jpg";
+import book2 from "@/assets/book2.jpg";
+
+import reunion1 from "@/assets/reunion1.jpg";
+import reunion2 from "@/assets/reunion2.jpg";
+
+import farewell1 from "@/assets/farewell1.jpg";
+import farewell2 from "@/assets/farewell2.jpg";
+
+import gift1 from "@/assets/gift1.jpg";
+import gift2 from "@/assets/gift2.jpg";
 
 export const Route = createFileRoute("/life-at-balo")({
   head: () => ({
@@ -39,7 +72,7 @@ const dayFlow: Block[] = [
   {
     title: "Morning Assembly, Prayer & Activities",
     desc: "The day opens with the whole school together in the hall — the morning prayer, the national pledge, a thought for the day, news headlines read by students and short activities or announcements. It sets a calm, shared tone before the first bell.",
-    images: [assembly, undefined],
+    images: [assembly1, assembly2],
   },
   {
     title: "Classes",
@@ -49,7 +82,7 @@ const dayFlow: Block[] = [
   {
     title: "Breaktime",
     desc: "A proper break to eat tiffin, drink water, run in the foyer play area and simply be children. Teachers supervise so that every child is safe, included and has someone to play with.",
-    images: [breaktime, undefined],
+    images: [breaktime, breaktime2],
   },
   {
     title: "Music & Dance",
@@ -64,6 +97,7 @@ const dayFlow: Block[] = [
   {
     title: "Reflection",
     desc: "Each week, students write about their good and bad actions of the week — what they did well, where they fell short and what they will do differently. This weekly reflection helps children think honestly about their behaviour, take responsibility and steadily improve.",
+    images: [ref1, ref2],
   },
   {
     title: "Lunch",
@@ -76,14 +110,17 @@ const awareness: Block[] = [
   {
     title: "Nutrition",
     desc: "Sessions on healthy eating and balanced meals, including regular distribution of fruit such as bananas so students see healthy food as normal, not special.",
+    images: [nutrition1, nutrition2],
   },
   {
     title: "Personal Hygiene",
     desc: "Handwashing, nail and hair care, clean uniforms, dental care and safe habits — taught practically and revisited through the year.",
+    images: [hygiene1, hygiene2],
   },
   {
     title: "Importance of Water",
     desc: "Why clean drinking water matters, staying hydrated through Howrah's hot months, and not wasting or contaminating water at home and in the neighbourhood.",
+    images: [water1, water2],
   },
 ];
 
@@ -91,26 +128,32 @@ const otherActivities: Block[] = [
   {
     title: "Students Rally for a Clean Neighbourhood",
     desc: "Students take to the lanes of Pilkhana and Babudanga with placards and slogans, educating local families about cleanliness, garbage disposal and the harm caused by improper waste management.",
+    images: [rally1, rally2],
   },
   {
     title: "Result Day",
     desc: "Report cards are handed over in person, with teachers sitting down with parents to explain each child's progress, strengths and the areas to work on next term.",
+    images: [result1, result2],
   },
   {
     title: "Book Distribution",
     desc: "Textbooks, notebooks and stationery are distributed free to every student at the start of the academic year, so no child begins the year unprepared.",
+    images: [book1, book2],
   },
   {
     title: "Reunion",
     desc: "Former students come back to meet their teachers and juniors, share what they are doing now and encourage the current batch — proof to our children of where BALO can lead.",
+    images: [reunion1, reunion2],
   },
   {
     title: "Farewell Party",
     desc: "A warm send-off for students completing their board examinations, with performances, speeches, photographs and blessings from the staff.",
+    images: [farewell1, farewell2],
   },
   {
     title: "Gift Distribution",
     desc: "Gifts and prizes for students who take part in sports, cultural events and competitions — every participant is recognised, not just the winners.",
+    images: [gift1, gift2],
   },
 ];
 
@@ -149,6 +192,7 @@ function LifeAtBaloPage() {
         title="One school day, from prayer to"
         highlight="lunch."
         lead="This is what a day at Balo English Medium School actually looks like — and the awareness programmes, rallies and celebrations that fill the rest of our year."
+        image={baloBackground}
       />
 
       {dayFlow.map((b, i) => (
@@ -157,7 +201,7 @@ function LifeAtBaloPage() {
         </Section>
       ))}
 
-      <Section title="Yoga Day" eyebrow="Every 21 June">
+      <Section title="Yoga Day" eyebrow="21 June">
         <Reveal>
           <p className="mb-6 max-w-3xl leading-relaxed text-muted-foreground">
             On International Yoga Day the whole school gathers for a guided session of simple asanas
@@ -166,7 +210,11 @@ function LifeAtBaloPage() {
           </p>
         </Reveal>
         <Reveal i={1}>
-          <SamplePair label="Yoga Day" onOpen={lightbox.open} />
+          <SamplePair
+            label="Yoga Day"
+             images={[yoga1, yoga2]}
+             onOpen={lightbox.open}
+           />
         </Reveal>
       </Section>
 

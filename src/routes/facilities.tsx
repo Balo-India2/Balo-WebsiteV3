@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useLightbox, TapHint } from "@/components/page-kit";
+
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -149,14 +151,26 @@ function Hero() {
   );
 }
 
-function FacilityCarousel({ images, title }: { images: string[]; title: string }) {
+function FacilityCarousel({
+  images,
+  title,
+  onOpen,
+}: {
+  images: string[];
+  title: string;
+  onOpen?: (src: string, label: string) => void;
+}) {
   const [active, setActive] = useState(0);
   useEffect(() => {
     const t = window.setInterval(() => setActive((i) => (i + 1) % images.length), 3200);
     return () => window.clearInterval(t);
   }, [images.length]);
   return (
-    <div className="relative size-full">
+    <div
+      className={`relative size-full ${onOpen ? "cursor-zoom-in" : ""}`}
+      onClick={() => { const s = images[active]; if (s && onOpen) onOpen(s, title); }}
+    >
+
       {images.map((src, i) => (
         <motion.img
           key={src}
@@ -169,23 +183,27 @@ function FacilityCarousel({ images, title }: { images: string[]; title: string }
           className="absolute inset-0 size-full object-cover"
         />
       ))}
+      {onOpen && <TapHint className="bottom-8" />}
       <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5">
         {images.map((src, i) => (
           <button
             key={src}
             type="button"
             aria-label={`Show ${title} image ${i + 1}`}
-            onClick={() => setActive(i)}
+            onClick={(e) => { e.stopPropagation(); setActive(i); }}
             className={`h-1.5 rounded-full transition-all ${active === i ? "w-6 bg-white" : "w-1.5 bg-white/60"}`}
           />
         ))}
       </div>
+
     </div>
   );
 }
 
 function FacilitiesGrid() {
+  const lightbox = useLightbox();
   return (
+
     <section className="py-28 px-6">
       <div className="max-w-7xl mx-auto">
         <motion.div
@@ -220,18 +238,22 @@ function FacilitiesGrid() {
             >
               <div className="aspect-[4/3] overflow-hidden">
                 {f.carousel ? (
-                  <FacilityCarousel images={f.carousel} title={f.title} />
+                  <FacilityCarousel images={f.carousel} title={f.title} onOpen={lightbox.open} />
                 ) : (
-                  <img
-                    src={f.image}
-                    alt={f.title}
-                    width={1280}
-                    height={900}
-                    loading="lazy"
-                    className="size-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
+                  <div className="relative size-full cursor-zoom-in" onClick={() => lightbox.open(f.image, f.title)}>
+                    <img
+                      src={f.image}
+                      alt={f.title}
+                      width={1280}
+                      height={900}
+                      loading="lazy"
+                      className="size-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <TapHint />
+                  </div>
                 )}
               </div>
+
               <div className="p-6 flex-1 flex flex-col">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="size-10 rounded-xl bg-primary/10 text-primary grid place-items-center">
@@ -255,8 +277,10 @@ function FacilitiesGrid() {
           ))}
         </div>
       </div>
+      {lightbox.node}
     </section>
   );
+
 }
 
 function CTA() {

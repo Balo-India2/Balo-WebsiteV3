@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHero, Section, Reveal, SampleImage, SamplePair, useLightbox } from "@/components/page-kit";
 
-import staffGroup from "@/assets/staff-group.jpg";
-import staffNew from "@/assets/staff-new.jpg";
-import teacherBoard from "@/assets/teacher-board.jpg";
-import mealPrep from "@/assets/meal.jpg";
-import kitchen2 from "@/assets/lunch-meal.jpg";
+import staffGroup from "@/assets/teaching3.jpg";
+import staffNew from "@/assets/staff-all.jpg";
+import teacherBoard from "@/assets/teaching2.jpg";
+import mealPrep from "@/assets/non-teaching2.jpg";
+import kitchen2 from "@/assets/non-teaching.jpg";
+
 
 export const Route = createFileRoute("/staff")({
   head: () => ({
@@ -38,6 +39,7 @@ function StaffPage() {
         title="The people who make BALO"
         highlight="work."
         lead="More than twenty teachers, coordinators, cooks, helpers and volunteers share one school day — teaching, feeding, guiding and looking after 480 children."
+        image={staffNew}
       />
 
       {/* Manager */}

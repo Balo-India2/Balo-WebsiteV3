@@ -3,7 +3,8 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import {
   BookOpen, Calculator, FlaskConical, Globe2, Landmark, Languages, Laptop,
-  Coins, GraduationCap, PenLine, MapPin, ArrowRight,
+  Coins, GraduationCap, HeartHandshake, MapPin, ArrowRight, Atom, Microscope,
+  Scale, Sigma,
 } from "lucide-react";
 
 import hero from "@/assets/subjects-banner-new.jpg";
@@ -12,10 +13,12 @@ export const Route = createFileRoute("/subjects")({
   head: () => ({
     meta: [
       { title: "Academics — Balo English Medium School, Howrah" },
-      { name: "description", content: "Explore the academic subjects taught at Balo English Medium School: English, Hindi, Bengali, Mathematics, Science, Social Studies, Computer, Economics and more." },
+      { name: "description", content: "The class-wise subject list at Balo English Medium School — Mathematics, English Grammar & Literature, Hindi, Science, Physics, Chemistry, Biology, History, Geography, Computer Applications, Commercial Applications, Economics and Political Science." },
       { property: "og:title", content: "Academics — Balo English Medium School" },
-      { property: "og:description", content: "From elementary spelling dictations to high-school physics, chemistry, biology and economics — see the full curriculum." },
+      { property: "og:description", content: "See exactly which subjects are taught in each class, from Class 1 through Class 12." },
       { property: "og:image", content: hero },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/subjects" }],
   }),
@@ -26,27 +29,78 @@ const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   show: (i = 0) => ({
     opacity: 1, y: 0,
-    transition: { duration: 0.7, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.7, delay: Math.min(i, 3) * 0.06, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
-const elementary = [
-  { icon: Languages, title: "English Grammar & Literature", desc: "Reading, writing, grammar drills, poetry and story comprehension." },
-  { icon: BookOpen, title: "Hindi", desc: "Reading, writing and conversational Hindi from an early age." },
-  { icon: BookOpen, title: "Bengali", desc: "Foundational reading and writing in the mother tongue of West Bengal." },
-  { icon: Globe2, title: "Social Studies", desc: "Community, environment, culture and civic awareness." },
-  { icon: PenLine, title: "Spelling & Dictations", desc: "Daily spelling practice and dictation to build accuracy and confidence." },
-];
+const ICONS: Record<string, typeof BookOpen> = {
+  "Mathematics": Calculator,
+  "English Grammar": Languages,
+  "English Literature": BookOpen,
+  "Hindi": BookOpen,
+  "General Science": FlaskConical,
+  "Moral Science": HeartHandshake,
+  "Physics": Atom,
+  "Chemistry": FlaskConical,
+  "Biology": Microscope,
+  "History": Landmark,
+  "Geography": MapPin,
+  "Computer Applications": Laptop,
+  "Commercial Applications": Coins,
+  "Economics": Sigma,
+  "Political Science": Scale,
+};
 
-const highSchool = [
-  { icon: Calculator, title: "Mathematics", desc: "Arithmetic, algebra, geometry and reasoning — with regular problem-solving practice." },
-  { icon: FlaskConical, title: "Science — Physics, Chemistry, Biology", desc: "Theory paired with hands-on practical sessions in our laboratory: experiments, observation and lab reports." },
-  { icon: GraduationCap, title: "General Knowledge", desc: "Current affairs, world facts and everyday awareness." },
-  { icon: Landmark, title: "History", desc: "India and the world — timelines, movements and the people who shaped them." },
-  { icon: MapPin, title: "Geography", desc: "Physical, human and regional geography with map-work." },
-  { icon: Laptop, title: "Computer & Practical Sessions", desc: "Typing, coding basics, digital literacy and supervised hands-on lab time." },
-  { icon: Coins, title: "Commercial Application & Finance", desc: "Introduction to business, accounts and personal finance." },
-  { icon: Coins, title: "Economics & Political Science", desc: "How societies organise themselves — markets, governance and citizenship." },
+const DESCRIPTIONS: Record<string, string> = {
+  "Mathematics": "Number work, algebra, geometry and daily problem-solving practice.",
+  "English Grammar": "Sentence structure, tenses, usage and written accuracy.",
+  "English Literature": "Prose, poetry and comprehension — reading with understanding.",
+  "Hindi": "Reading, writing and conversation in Hindi.",
+  "General Science": "Everyday science: living things, matter, energy and the environment.",
+  "Moral Science": "Values, kindness, honesty and citizenship for our youngest learners.",
+  "Physics": "Motion, force, light, heat, sound and electricity, with laboratory practicals.",
+  "Chemistry": "Matter, reactions, acids and bases — theory plus supervised experiments.",
+  "Biology": "Life processes, the human body, plants and health, with microscope work.",
+  "History": "India and the world — timelines, movements and the people who shaped them.",
+  "Geography": "Physical, human and regional geography with map-work.",
+  "Computer Applications": "Digital literacy, typing, applications and coding basics in the computer lab.",
+  "Commercial Applications": "Business, trade, accounts and the basics of commerce.",
+  "Economics": "How markets, money and economies work.",
+  "Political Science": "Governance, constitutions, rights and citizenship.",
+};
+
+/** Class-wise subject list, exactly as taught at BALO. */
+const STAGES: { stage: string; classes: string; note: string; subjects: string[] }[] = [
+  {
+    stage: "Lower Primary",
+    classes: "Class 1 – Class 4",
+    note: "Foundation years — strong English, number sense and good habits.",
+    subjects: ["Mathematics", "English Grammar", "English Literature", "Hindi", "General Science", "Moral Science"],
+  },
+  {
+    stage: "Upper Primary",
+    classes: "Class 5",
+    note: "Social studies splits into History and Geography, and computer work begins.",
+    subjects: ["Mathematics", "English Grammar", "English Literature", "Hindi", "General Science", "History", "Geography", "Computer Applications"],
+  },
+  {
+    stage: "Middle School",
+    classes: "Class 6 – Class 8",
+    note: "Science separates into Physics, Chemistry and Biology with laboratory practicals.",
+    subjects: ["Mathematics", "English Grammar", "English Literature", "Hindi", "Physics", "Chemistry", "Biology", "History", "Geography", "Computer Applications"],
+  },
+  {
+    stage: "Secondary",
+    classes: "Class 9 – Class 10",
+    note: "Board-exam years, with Commercial Applications added.",
+    subjects: ["Mathematics", "English Grammar", "English Literature", "Hindi", "Physics", "Chemistry", "Biology", "History", "Geography", "Computer Applications", "Commercial Applications"],
+  },
+  {
+    stage: "Senior Secondary",
+    classes: "Class 11 – Class 12",
+    note: "Economics and Political Science join the senior curriculum.",
+    subjects: ["Mathematics", "English Grammar", "English Literature", "Hindi", "Physics", "Chemistry", "Biology", "History", "Geography", "Computer Applications", "Commercial Applications", "Economics", "Political Science"],
+  },
 ];
 
 function Hero() {
@@ -68,7 +122,9 @@ function Hero() {
             The subjects we <span className="italic text-secondary">teach.</span>
           </h1>
           <p className="mt-6 text-lg md:text-xl text-white/85 max-w-2xl">
-            A full English-medium curriculum — from spelling dictations in Class I to physics, chemistry, biology, economics and computer practicals in the higher classes.
+            A full English-medium curriculum, class by class — from Moral Science and General Science
+            in the early years to Physics, Chemistry, Biology, Economics and Political Science in the
+            senior classes.
           </p>
         </motion.div>
       </div>
@@ -76,27 +132,39 @@ function Hero() {
   );
 }
 
-function SubjectSection({ title, subtitle, items }: { title: string; subtitle: string; items: typeof elementary }) {
+function StageSection({ stage, index }: { stage: (typeof STAGES)[number]; index: number }) {
   return (
-    <section className="py-20 px-6">
-      <div className="max-w-7xl mx-auto">
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.2 }} variants={fadeUp} className="max-w-3xl mb-12">
-          <div className="text-xs uppercase tracking-[0.2em] text-accent font-bold mb-4">{subtitle}</div>
-          <h2 className="text-4xl md:text-5xl font-bold text-balance">{title}</h2>
+    <section className={index % 2 === 1 ? "bg-card px-6 py-16" : "px-6 py-16"}>
+      <div className="mx-auto max-w-7xl">
+        <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={fadeUp} className="mb-10 max-w-3xl">
+          <div className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">{stage.classes}</div>
+          <h2 className="text-balance font-display text-4xl font-bold md:text-5xl">{stage.stage}</h2>
+          <p className="mt-4 text-muted-foreground">{stage.note}</p>
         </motion.div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map((s, i) => (
-            <motion.article key={s.title}
-              initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.2 }} variants={fadeUp} custom={i}
-              whileHover={{ y: -6 }}
-              className="p-6 rounded-3xl bg-card border border-border shadow-soft">
-              <div className="size-11 rounded-2xl bg-primary/10 text-primary grid place-items-center mb-4">
-                <s.icon className="size-5" />
-              </div>
-              <h3 className="font-display text-xl font-bold mb-2">{s.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
-            </motion.article>
-          ))}
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {stage.subjects.map((name, i) => {
+            const Icon = ICONS[name] ?? GraduationCap;
+            return (
+              <motion.article
+                key={name}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={fadeUp}
+                custom={i}
+                whileHover={{ y: -6 }}
+                className="rounded-3xl border border-border bg-background p-6 shadow-soft"
+              >
+                <div className="mb-4 grid size-11 place-items-center rounded-2xl bg-primary/10 text-primary">
+                  <Icon className="size-5" />
+                </div>
+                <h3 className="mb-2 font-display text-xl font-bold">{name}</h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {DESCRIPTIONS[name] ?? ""}
+                </p>
+              </motion.article>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -107,13 +175,12 @@ function SubjectsPage() {
   return (
     <main>
       <Hero />
-      <SubjectSection title="Elementary School" subtitle="Grades I – V" items={elementary} />
-      <div className="bg-card">
-        <SubjectSection title="Middle School" subtitle="Grades VI – X" items={highSchool} />
-      </div>
-      <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <a href="/#contact" className="inline-flex items-center gap-2 rounded-full bg-accent text-accent-foreground px-8 py-4 font-semibold shadow-soft hover:scale-105 transition-transform">
+      {STAGES.map((stage, i) => (
+        <StageSection key={stage.stage} stage={stage} index={i} />
+      ))}
+      <section className="px-6 py-20">
+        <div className="mx-auto max-w-4xl text-center">
+          <a href="/#contact" className="inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 font-semibold text-accent-foreground shadow-soft transition-transform hover:scale-105">
             Visit our classrooms <ArrowRight className="size-4" />
           </a>
         </div>

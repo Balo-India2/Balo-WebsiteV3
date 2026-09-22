@@ -1,16 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHero, Section, Reveal, SamplePair, useLightbox } from "@/components/page-kit";
 
-import hallA from "@/assets/raised-hands.jpg";
+import hallA from "@/assets/hall1.jpg";
+import hallB from "@/assets/hall2.jpg";
 import staffA from "@/assets/staff-group.jpg";
-import compA from "@/assets/computer-lab.jpg";
-import compB from "@/assets/smart-class.jpg";
-import labA from "@/assets/science-lab.jpg";
-import labB from "@/assets/img-science-exp-a.jpg";
-import kitchenA from "@/assets/meal.jpg";
-import kitchenB from "@/assets/lunch-meal.jpg";
+import staffB from "@/assets/staff-room.jpg";
+import compA from "@/assets/comp1.jpg";
+import compB from "@/assets/comp2.jpg";
+import labA from "@/assets/lab1.jpg";
+import labB from "@/assets/lab2.jpg";
+import kitchenA from "@/assets/kitchen1.jpg";
+import kitchenB from "@/assets/kitchen2.jpg";
 import classA from "@/assets/classroom-1.jpg";
 import classB from "@/assets/classroom-2.jpg";
+import receptionA from "@/assets/reception1.jpg";
+import receptionB from "@/assets/reception2.jpg";
+import imglibrarytree from "@/assets/img-library-tree.jpg";
 
 export const Route = createFileRoute("/virtual-tour")({
   head: () => ({
@@ -37,7 +42,7 @@ const stops: { title: string; desc: string; images?: [string?, string?] }[] = [
   {
     title: "Hall Room",
     desc: "Every school day begins here. Students gather for the morning assembly and morning prayer, share the day's thought, hear announcements from the teachers and start the morning together as one school. The hall also hosts rehearsals, competitions and cultural programmes through the year.",
-    images: [hallA, undefined],
+    images: [hallA, hallB],
   },
   {
     title: "Staff Room",
@@ -67,6 +72,7 @@ const stops: { title: string; desc: string; images?: [string?, string?] }[] = [
   {
     title: "Reception",
     desc: "The welcoming point of the school and the first place visitors and parents come to. Enquiries, appointments with teachers, notices, diaries and day-to-day communication with families are all handled here.",
+    images: [receptionA, receptionB],
   },
 ];
 
@@ -80,6 +86,7 @@ function VirtualTourPage() {
         title="Step inside our"
         highlight="campus."
         lead="Can't visit in person yet? Take the tour room by room — from the morning prayer in the hall to the science lab, the kitchen and the classrooms where 480 children learn every day."
+        image={imglibrarytree}
       />
 
       {stops.map((s, i) => (

@@ -22,6 +22,7 @@ import g18 from "@/assets/drive3-06.jpg";
 import dome1 from "@/assets/group-students.jpg";
 import dome2 from "@/assets/raised-hands.jpg";
 import dome3 from "@/assets/classroom-reading.jpg";
+import gallerybackground from "@/assets/gallery-background.jpg";
 
 export const Route = createFileRoute("/gallery")({
   head: () => ({
@@ -81,6 +82,7 @@ function GalleryPage() {
         title="Life at BALO, in"
         highlight="pictures."
         lead="Every photograph here is a real day at Balo English Medium School — lessons, laughter, celebrations and the small moments that make this school a second home for 480 children."
+        image={gallerybackground}
       />
 
       {/* Gallery dome */}

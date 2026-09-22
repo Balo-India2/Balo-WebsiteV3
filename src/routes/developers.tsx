@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import { Code2, Code, Heart, Sparkles } from "lucide-react";
 
 import developers from "@/assets/developers-new.jpg";
@@ -50,13 +51,16 @@ const team = [
 ];
 
 function DevelopersPage() {
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
   return (
     <main className="pt-24">
-      <section className="relative min-h-[55vh] flex items-center py-20 px-6 text-white overflow-hidden">
-        <img
+      <section ref={heroRef} className="relative min-h-[55vh] flex items-center py-20 px-6 text-white overflow-hidden">
+        <motion.img style={{ scale: heroScale }}
           src={banner}
           alt="Developer workstation with code on screen"
-          className="absolute inset-0 size-full object-cover"
+          className="absolute inset-0 size-full object-cover origin-center"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/75 to-accent/80" />
         <div className="relative max-w-5xl mx-auto text-center">

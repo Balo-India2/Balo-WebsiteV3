@@ -1,4 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useLightbox, TapHint } from "@/components/page-kit";
+
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -310,6 +312,7 @@ function Programs() {
 }
 
 function Gallery() {
+  const lightbox = useLightbox();
   const imgs = [
     { src: classroom1, span: "md:col-span-2 md:row-span-2", a: "Classroom at Balo" },
     { src: hands, span: "", a: "Raised hands" },
@@ -330,7 +333,7 @@ function Gallery() {
             <div className="text-xs uppercase tracking-[0.2em] text-accent font-bold mb-4">Gallery</div>
             <h2 className="text-4xl md:text-5xl font-bold max-w-xl text-balance">Moments from our classrooms.</h2>
           </div>
-          <p className="text-muted-foreground max-w-sm">Real days, real children, real progress — captured around our little school in Salkia.</p>
+          <p className="text-muted-foreground max-w-sm">Real days, real children, real progress — captured around our little school in Salkia. Tap any photo to preview it.</p>
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-[180px] md:auto-rows-[220px] gap-4">
@@ -341,15 +344,28 @@ function Gallery() {
               viewport={{ once: false, amount: 0.2 }}
               transition={{ duration: 0.6, delay: i * 0.05 }}
               whileHover={{ scale: 1.02 }}
-              className={`relative overflow-hidden rounded-2xl shadow-soft ${im.span}`}>
+              onClick={() => lightbox.open(im.src, im.a)}
+              className={`group relative cursor-zoom-in overflow-hidden rounded-2xl shadow-soft ${im.span}`}>
               <LazyImage src={im.src} alt={im.a} className="absolute inset-0 size-full object-cover hover:scale-110 transition-transform duration-700" />
+              <TapHint />
             </motion.div>
           ))}
         </div>
+
+        <div className="mt-12 flex justify-center">
+          <Link
+            to="/gallery"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground shadow-soft transition-transform hover:scale-105"
+          >
+            Explore the full gallery <ArrowRight className="size-4" />
+          </Link>
+        </div>
       </div>
+      {lightbox.node}
     </section>
   );
 }
+
 
 function Impact() {
   return (
