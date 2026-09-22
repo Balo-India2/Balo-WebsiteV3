@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { TapHint } from "@/components/page-kit";
 
 export function MediaCarousel({
   images,
@@ -7,12 +8,15 @@ export function MediaCarousel({
   interval = 3200,
   aspect = "aspect-[4/3]",
   rounded = "",
+  onOpen,
 }: {
   images: string[];
   title: string;
   interval?: number;
   aspect?: string;
   rounded?: string;
+  /** When provided, tapping the photo opens it in a lightbox preview. */
+  onOpen?: (src: string, label: string) => void;
 }) {
   const [active, setActive] = useState(0);
   useEffect(() => {
@@ -21,7 +25,13 @@ export function MediaCarousel({
     return () => window.clearInterval(t);
   }, [images.length, interval]);
   return (
-    <div className={`relative w-full ${aspect} ${rounded} overflow-hidden`}>
+    <div
+      onClick={() => {
+        const src = images[active];
+        if (src && onOpen) onOpen(src, title);
+      }}
+      className={`relative w-full ${aspect} ${rounded} overflow-hidden ${onOpen ? "cursor-zoom-in" : ""}`}
+    >
       {images.map((src, i) => (
         <motion.img
           key={src + i}
@@ -34,6 +44,7 @@ export function MediaCarousel({
           className="absolute inset-0 size-full object-cover"
         />
       ))}
+      {onOpen && <TapHint className="bottom-8" />}
       {images.length > 1 && (
         <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 z-10">
           {images.map((src, i) => (
@@ -41,7 +52,7 @@ export function MediaCarousel({
               key={src + i}
               type="button"
               aria-label={`Show ${title} image ${i + 1}`}
-              onClick={() => setActive(i)}
+              onClick={(e) => { e.stopPropagation(); setActive(i); }}
               className={`h-1.5 rounded-full transition-all ${active === i ? "w-6 bg-white" : "w-1.5 bg-white/60"}`}
             />
           ))}

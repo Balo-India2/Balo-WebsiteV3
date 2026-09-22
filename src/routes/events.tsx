@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import { Calendar, MapPin, ArrowRight, Sparkles, X, Bell, BellRing } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNotices, markAllNoticesSeen, useNotifyPreference } from "@/lib/notices";
@@ -203,6 +204,9 @@ function NoticeBoard() {
 
 function EventsPage() {
   const [selected, setSelected] = useState<EventPost | null>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
   useEffect(() => {
     if (!selected) return;
@@ -213,14 +217,14 @@ function EventsPage() {
 
   return (
     <main className="pt-24">
-      <section className="relative py-20 px-6 overflow-hidden text-white">
-        <video
+      <section ref={heroRef} className="relative py-20 px-6 overflow-hidden text-white">
+        <motion.video style={{ scale: heroScale }}
           src="/video/events-banner.mp4"
           autoPlay
           muted
           loop
           playsInline
-          className="absolute inset-0 size-full object-cover"
+          className="absolute inset-0 size-full object-cover origin-center"
           aria-hidden
         />
         <img

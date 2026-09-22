@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import {
@@ -10,27 +10,14 @@ import director from "@/assets/director.jpg";
 import principal from "@/assets/principal.jpg";
 import hero from "@/assets/hero-classroom.jpg";
 import group from "@/assets/group-students.jpg";
-import staffAsset from "@/assets/staff-new.jpg";
-import volunteerCertificate from "@/assets/drive-gallery2-01.jpg";
-import volunteerLaptop from "@/assets/drive-gallery2-06.jpg";
-import volunteerTeaching from "@/assets/drive-gallery2-12.jpg";
-import volunteerCircleOne from "@/assets/drive-gallery2-09.jpg";
-import volunteerCircleTwo from "@/assets/drive-gallery2-15.jpg";
-import volunteerGift from "@/assets/drive-gallery2-14.jpg";
-import volunteerCurly from "@/assets/drive-gallery2-08.jpg";
-import volunteerNewOne from "@/assets/volunteer-new-01.jpg";
-import volunteerNewTwo from "@/assets/volunteer-new-02.jpg";
-
-const staffGroup = staffAsset;
 
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Us — Balo English Medium School, Howrah" },
-      { name: "description", content: "Meet the hearts behind Balo English Medium School: founder Mrs Elizabetta Ravoili, director Mrs Rehana Khatoon, and principal Mrs Roshan Ara." },
-      { property: "og:title", content: "About Us — Balo English Medium School" },
+      { title: "Leadership — Balo English Medium School, Howrah" },
+      { name: "description", content: "Meet the founder, director and principal guiding Balo English Medium School in Howrah." },
+      { property: "og:title", content: "Leadership — Balo English Medium School" },
       { property: "og:description", content: "Meet the hearts behind Balo English Medium School: founder Mrs Elizabetta Ravoili, director Mrs Rehana Khatoon, and principal Mrs Roshan Ara." },
-      { property: "og:image", content: founder },
     ],
     links: [{ rel: "canonical", href: "/about" }],
   }),
@@ -59,14 +46,14 @@ const leaders = [
     role: "Director",
     image: director,
     quote: "Education is not a privilege; it is a promise we keep.",
-    bio: "As Director, Mrs Khatoon shapes the day-to-day soul of the school. She oversees curriculum, teacher training, and community outreach, making sure every family feels heard and every child feels safe.",
+    bio: "As Director, Mrs Rehana shapes the day-to-day soul of the school. She oversees curriculum, teacher training, and community outreach, making sure every family feels heard and every child feels safe.",
   },
   {
     name: "Mrs Roshan Ara",
     role: "Principal",
     image: principal,
     quote: "When children feel loved, they learn without fear.",
-    bio: "Principal Ara leads the school with warmth and discipline in equal measure. Under her guidance, Balo English Medium School has grown from a small tuition corner into a full-fledged English-medium learning centre.",
+    bio: "Principal Roshan Ara leads the school with warmth and discipline in equal measure. Under her guidance, Balo English Medium School has grown from a small tuition corner into a full-fledged English-medium learning centre.",
   },
 ];
 
@@ -91,7 +78,7 @@ function Hero() {
       <div className="max-w-7xl mx-auto px-6 w-full text-white">
         <motion.div initial="hidden" animate="show" variants={fadeUp}>
           <div className="text-xs uppercase tracking-[0.25em] text-secondary font-bold mb-4">
-            About Us
+             Leadership
           </div>
           <h1 className="text-5xl md:text-7xl font-black text-balance leading-[0.95]">
             Meet the hearts behind <span className="italic text-secondary">Balo English Medium School.</span>
@@ -258,254 +245,12 @@ function ImpactQuote() {
   );
 }
 
-function SisterOrgs() {
-  return (
-    <section className="py-28 px-6 bg-card">
-      <motion.div
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: false, amount: 0.2 }}
-        variants={fadeUp}
-        className="max-w-4xl mx-auto"
-      >
-        <div className="text-xs uppercase tracking-[0.2em] text-accent font-bold mb-4 text-center">
-          Our Global Family
-        </div>
-        <h2 className="text-3xl md:text-4xl font-bold text-balance text-center mb-8">
-          Together with our sister organizations.
-        </h2>
-        <p className="text-lg text-muted-foreground leading-relaxed text-center">
-          Together with{" "}
-          <a href="https://www.balo.it/en/" target="_blank" rel="noopener noreferrer" className="text-accent font-semibold hover:underline">
-            Balo Italia
-          </a>
-          ,{" "}
-          <a href="https://www.balousa.org/" target="_blank" rel="noopener noreferrer" className="text-accent font-semibold hover:underline">
-            Balo USA
-          </a>
-          , Ireland, and Malaysia, we raise funds to meet the needs of our students and young women. This year Balo is aiming to raise money to support the annual cost of building costs, teacher salaries, a hot meal daily for 480 students and 20+ staff members, school supplies, uniforms, a safe home for girls in danger, women’s training programs, and micro loans.
-        </p>
-        <p className="mt-6 text-lg text-muted-foreground leading-relaxed text-center">
-          Beyond the school, our safe and loving home,{" "}
-          <a href="http://www.balousa.org/projects/casa-balo-home-for-endangered-girls/" target="_blank" rel="noopener noreferrer" className="text-accent font-semibold hover:underline">
-            Casabalo
-          </a>
-          , offers shelter and care to girls at risk, looked after by a devoted house mother. It is also where we hold our{" "}
-          <a href="https://www.balousa.org/projects/sewing-and-tailoring/" target="_blank" rel="noopener noreferrer" className="text-accent font-semibold hover:underline">
-            tailoring
-          </a>
-          {" "}and{" "}
-          <a href="https://www.balousa.org/projects/hairdressing/" target="_blank" rel="noopener noreferrer" className="text-accent font-semibold hover:underline">
-            hairdressing classes
-          </a>
-          , giving young women practical skills and a fresh start.
-        </p>
-      </motion.div>
-    </section>
-  );
-}
-
-function Staff() {
-  return (
-    <section className="py-28 px-6">
-      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-        <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: false, amount: 0.2 }}
-          transition={{ duration: 0.8 }}
-        >
-          <img
-            src={staffGroup}
-            alt="Balo English Medium School staff at the Color Storm event"
-            width={1200}
-            height={1200}
-            loading="lazy"
-            className="rounded-3xl shadow-card w-full aspect-square object-cover"
-          />
-        </motion.div>
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: false, amount: 0.2 }}
-          variants={fadeUp}
-        >
-          <div className="text-xs uppercase tracking-[0.2em] text-accent font-bold mb-4">
-            Our Staff
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-balance leading-tight">
-            The teachers and team who show up every day.
-          </h2>
-          <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-            Behind every smiling student at Balo English Medium School is a team of 20+ teachers, coordinators, helpers, and volunteers who treat the school like home. From early-morning prep and patient classroom hours to organising events like our annual <em>Color Storm</em>, our staff bring warmth, discipline, and creativity into every corner of the school.
-          </p>
-          <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-            Many of our teachers grew up in the very same neighbourhoods our children come from. That shared story is what makes Balo more than a school — it's a community raising itself.
-          </p>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-const volunteers = [
-  {
-    name: "Amanda",
-    country: "Italy",
-    flag: "🇮🇹",
-    image: volunteerCertificate,
-    quote: "Walking into Balo for the first time felt like coming home. The children's joy is contagious — I left with more than I gave.",
-  },
-  {
-    name: "Liam",
-    country: "Ireland",
-    flag: "🇮🇪",
-    image: volunteerTeaching,
-    quote: "What Balo achieves with so little is extraordinary. Every teacher here is a quiet revolution.",
-  },
-  {
-    name: "Albi",
-    country: "Italy",
-    flag: "🇮🇹",
-    image: volunteerCircleOne,
-    quote: "I've volunteered in many schools, but the warmth and discipline at Balo are unlike anywhere else. These children will change their world.",
-  },
-  {
-    name: "Sofia",
-    country: "Italy",
-    flag: "🇮🇹",
-    image: volunteerGift,
-    quote: "Balo is proof that love, more than money, is what builds great schools.",
-  },
-  {
-    name: "Julie",
-    country: "Malaysia",
-    flag: "🇲🇾",
-    image: volunteerCurly,
-    quote: "The students welcomed me with so much affection. Balo shows how education, safety, and kindness can grow together.",
-  },
-  {
-    name: "Giovanna",
-    country: "Italy",
-    flag: "🇮🇹",
-    image: volunteerNewOne,
-    quote: "Balo's students inspired me every single day — their curiosity and warmth are unforgettable.",
-  },
-  {
-    name: "Daniel",
-    country: "Italy",
-    flag: "🇮🇹",
-    image: volunteerLaptop,
-    quote: "Teaching alongside the Balo team taught me as much as it taught the children.",
-  },
-  {
-    name: "Barbara",
-    country: "Italy",
-    flag: "🇮🇹",
-    image: volunteerCircleTwo,
-    quote: "The joy in these classrooms reminded me why education matters most.",
-  },
-  {
-    name: "Andrew",
-    country: "Italy",
-    flag: "🇮🇹",
-    image: volunteerNewTwo,
-    quote: "Balo is a school built on kindness. Being part of it, even briefly, changed me.",
-  },
-];
-
-const volunteerMoments = [
-  { image: volunteerCertificate, caption: "Recognising a volunteer's contribution with a certificate" },
-  { image: volunteerLaptop, caption: "Mentoring students through laptop-based activities" },
-  { image: volunteerTeaching, caption: "Classroom workshops led by international volunteers" },
-  { image: volunteerCircleOne, caption: "Circle games building trust and teamwork" },
-  { image: volunteerCircleTwo, caption: "Group activities and confidence-building sessions" },
-  { image: volunteerGift, caption: "Students thanking a volunteer with a heartfelt gift" },
-  { image: volunteerCurly, caption: "One-to-one reading time with a visiting volunteer" },
-  { image: volunteerNewOne, caption: "A visiting volunteer with our students" },
-  { image: volunteerNewTwo, caption: "Volunteer sharing a moment with the Balo family" },
-];
-
-function Volunteers() {
-  return (
-    <section className="py-28 px-6">
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: false, amount: 0.2 }}
-          variants={fadeUp}
-          className="text-center max-w-3xl mx-auto mb-16"
-        >
-          <div className="text-xs uppercase tracking-[0.2em] text-accent font-bold mb-4">
-            Our Volunteers
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-balance">
-            A family that crosses borders.
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Every year, volunteers from Italy, Ireland, the USA, Malaysia, and many more countries travel to Salkia to teach, mentor, and stand beside our children. They bring fresh ideas, languages, and an open heart — and they leave with stories that stay for a lifetime.
-          </p>
-        </motion.div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
-          {volunteers.map((v, i) => (
-            <motion.div
-              key={v.name}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: false, amount: 0.2 }}
-              variants={fadeUp}
-              custom={i}
-              whileHover={{ y: -6 }}
-              className="rounded-3xl bg-card border border-border shadow-soft p-6 flex flex-col"
-            >
-              <div className="text-5xl mb-4" aria-hidden>{v.flag}</div>
-              <p className="text-sm italic text-muted-foreground leading-relaxed flex-1">"{v.quote}"</p>
-              <div className="mt-5 pt-5 border-t border-border">
-                <div className="font-display font-bold">{v.name}</div>
-                <div className="text-xs uppercase tracking-[0.2em] text-accent font-bold mt-1">{v.country}</div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        <div className="mt-12">
-          <div className="text-xs uppercase tracking-[0.2em] text-accent font-bold mb-4 text-center">
-            Volunteer Moments
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {volunteerMoments.map((moment, i) => (
-              <motion.figure
-                key={moment.caption}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: false, amount: 0.2 }}
-                variants={fadeUp}
-                custom={i}
-                whileHover={{ y: -6, scale: 1.02 }}
-                className="rounded-3xl overflow-hidden bg-card border border-border shadow-soft"
-              >
-                <img src={moment.image} alt={moment.caption} className="aspect-[4/3] w-full object-cover" loading="lazy" />
-                <figcaption className="p-5 text-sm font-semibold text-muted-foreground">{moment.caption}</figcaption>
-              </motion.figure>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function AboutPage() {
   return (
     <main>
       <Hero />
       <Leadership />
-      <Staff />
-      <Volunteers />
       <Mission />
-      <SisterOrgs />
       <ImpactQuote />
     </main>
   );

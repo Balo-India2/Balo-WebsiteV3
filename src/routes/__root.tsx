@@ -92,6 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" },
@@ -157,10 +158,11 @@ function HashScroller() {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const isAdminRoute = pathname.startsWith("/admin");
+  const isAdminShellRoute = pathname === "/admin" || pathname.startsWith("/admin/");
+  const isAdminLogin = pathname === "/admin-login";
   // BALO AI is a full-screen chat surface: no marquee, no footer.
   const isChatRoute = pathname.startsWith("/balo-ai");
-  const isBare = isAdminRoute || isChatRoute;
+  const isBare = isAdminShellRoute || isChatRoute;
   const [ready, setReady] = useState(false);
 
   // Keep initial content mounted OFF-DOM while the splash is up so page
@@ -174,10 +176,10 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <LoadingScreen />
-        {!isAdminRoute && <Nav />}
-        {!isBare && <AnnouncementBanner />}
+        {!isAdminShellRoute && <Nav />}
+        {!isBare && !isAdminLogin && <AnnouncementBanner />}
         <HashScroller />
-        <div className={isBare ? "" : "pt-9"}>
+        <div className={isBare ? "" : isAdminLogin ? "pt-[72px]" : "pt-9"}>
           {ready ? <Outlet /> : <div style={{ minHeight: "100vh" }} aria-hidden />}
         </div>
         {!isBare && <Footer />}

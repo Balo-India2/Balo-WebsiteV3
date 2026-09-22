@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHero, Section, Reveal } from "@/components/page-kit";
 import { CalendarDays } from "lucide-react";
+import calendarBackground from "@/assets/calendar-background.jpg";
 
 export const Route = createFileRoute("/calendar")({
   head: () => ({
@@ -104,6 +105,7 @@ function CalendarPage() {
         title="The days we mark"
         highlight="together."
         lead="Alongside three academic terms and unit tests, BALO observes these national and international days with assemblies, workshops, rallies and cultural programmes. Exact dates for movable days are confirmed on the notice board each year."
+        image={calendarBackground}
       />
 
       {months.map((m, mi) => (

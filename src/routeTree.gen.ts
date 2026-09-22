@@ -10,12 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelfareSocietyRouteImport } from './routes/welfare-society'
+import { Route as VolunteersRouteImport } from './routes/volunteers'
 import { Route as VirtualTourRouteImport } from './routes/virtual-tour'
 import { Route as SubjectsRouteImport } from './routes/subjects'
 import { Route as StaffRouteImport } from './routes/staff'
 import { Route as RulesRouteImport } from './routes/rules'
 import { Route as LifeAtBaloRouteImport } from './routes/life-at-balo'
 import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as FacilitiesRouteImport } from './routes/facilities'
 import { Route as ExtracurricularRouteImport } from './routes/extracurricular'
 import { Route as EventsRouteImport } from './routes/events'
@@ -36,6 +38,11 @@ import { Route as AdminAiRouteImport } from './routes/admin.ai'
 const WelfareSocietyRoute = WelfareSocietyRouteImport.update({
   id: '/welfare-society',
   path: '/welfare-society',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VolunteersRoute = VolunteersRouteImport.update({
+  id: '/volunteers',
+  path: '/volunteers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VirtualTourRoute = VirtualTourRouteImport.update({
@@ -66,6 +73,11 @@ const LifeAtBaloRoute = LifeAtBaloRouteImport.update({
 const GalleryRoute = GalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FacilitiesRoute = FacilitiesRouteImport.update({
@@ -162,12 +174,14 @@ export interface FileRoutesByFullPath {
   '/events': typeof EventsRoute
   '/extracurricular': typeof ExtracurricularRoute
   '/facilities': typeof FacilitiesRoute
+  '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
   '/life-at-balo': typeof LifeAtBaloRoute
   '/rules': typeof RulesRoute
   '/staff': typeof StaffRoute
   '/subjects': typeof SubjectsRoute
   '/virtual-tour': typeof VirtualTourRoute
+  '/volunteers': typeof VolunteersRoute
   '/welfare-society': typeof WelfareSocietyRoute
   '/admin/ai': typeof AdminAiRoute
   '/admin/knowledge': typeof AdminKnowledgeRoute
@@ -186,12 +200,14 @@ export interface FileRoutesByTo {
   '/events': typeof EventsRoute
   '/extracurricular': typeof ExtracurricularRoute
   '/facilities': typeof FacilitiesRoute
+  '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
   '/life-at-balo': typeof LifeAtBaloRoute
   '/rules': typeof RulesRoute
   '/staff': typeof StaffRoute
   '/subjects': typeof SubjectsRoute
   '/virtual-tour': typeof VirtualTourRoute
+  '/volunteers': typeof VolunteersRoute
   '/welfare-society': typeof WelfareSocietyRoute
   '/admin/ai': typeof AdminAiRoute
   '/admin/knowledge': typeof AdminKnowledgeRoute
@@ -212,12 +228,14 @@ export interface FileRoutesById {
   '/events': typeof EventsRoute
   '/extracurricular': typeof ExtracurricularRoute
   '/facilities': typeof FacilitiesRoute
+  '/faq': typeof FaqRoute
   '/gallery': typeof GalleryRoute
   '/life-at-balo': typeof LifeAtBaloRoute
   '/rules': typeof RulesRoute
   '/staff': typeof StaffRoute
   '/subjects': typeof SubjectsRoute
   '/virtual-tour': typeof VirtualTourRoute
+  '/volunteers': typeof VolunteersRoute
   '/welfare-society': typeof WelfareSocietyRoute
   '/admin/ai': typeof AdminAiRoute
   '/admin/knowledge': typeof AdminKnowledgeRoute
@@ -239,12 +257,14 @@ export interface FileRouteTypes {
     | '/events'
     | '/extracurricular'
     | '/facilities'
+    | '/faq'
     | '/gallery'
     | '/life-at-balo'
     | '/rules'
     | '/staff'
     | '/subjects'
     | '/virtual-tour'
+    | '/volunteers'
     | '/welfare-society'
     | '/admin/ai'
     | '/admin/knowledge'
@@ -263,12 +283,14 @@ export interface FileRouteTypes {
     | '/events'
     | '/extracurricular'
     | '/facilities'
+    | '/faq'
     | '/gallery'
     | '/life-at-balo'
     | '/rules'
     | '/staff'
     | '/subjects'
     | '/virtual-tour'
+    | '/volunteers'
     | '/welfare-society'
     | '/admin/ai'
     | '/admin/knowledge'
@@ -288,12 +310,14 @@ export interface FileRouteTypes {
     | '/events'
     | '/extracurricular'
     | '/facilities'
+    | '/faq'
     | '/gallery'
     | '/life-at-balo'
     | '/rules'
     | '/staff'
     | '/subjects'
     | '/virtual-tour'
+    | '/volunteers'
     | '/welfare-society'
     | '/admin/ai'
     | '/admin/knowledge'
@@ -314,12 +338,14 @@ export interface RootRouteChildren {
   EventsRoute: typeof EventsRoute
   ExtracurricularRoute: typeof ExtracurricularRoute
   FacilitiesRoute: typeof FacilitiesRoute
+  FaqRoute: typeof FaqRoute
   GalleryRoute: typeof GalleryRoute
   LifeAtBaloRoute: typeof LifeAtBaloRoute
   RulesRoute: typeof RulesRoute
   StaffRoute: typeof StaffRoute
   SubjectsRoute: typeof SubjectsRoute
   VirtualTourRoute: typeof VirtualTourRoute
+  VolunteersRoute: typeof VolunteersRoute
   WelfareSocietyRoute: typeof WelfareSocietyRoute
   ApiChatRoute: typeof ApiChatRoute
 }
@@ -331,6 +357,13 @@ declare module '@tanstack/react-router' {
       path: '/welfare-society'
       fullPath: '/welfare-society'
       preLoaderRoute: typeof WelfareSocietyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/volunteers': {
+      id: '/volunteers'
+      path: '/volunteers'
+      fullPath: '/volunteers'
+      preLoaderRoute: typeof VolunteersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/virtual-tour': {
@@ -373,6 +406,13 @@ declare module '@tanstack/react-router' {
       path: '/gallery'
       fullPath: '/gallery'
       preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/facilities': {
@@ -517,12 +557,14 @@ const rootRouteChildren: RootRouteChildren = {
   EventsRoute: EventsRoute,
   ExtracurricularRoute: ExtracurricularRoute,
   FacilitiesRoute: FacilitiesRoute,
+  FaqRoute: FaqRoute,
   GalleryRoute: GalleryRoute,
   LifeAtBaloRoute: LifeAtBaloRoute,
   RulesRoute: RulesRoute,
   StaffRoute: StaffRoute,
   SubjectsRoute: SubjectsRoute,
   VirtualTourRoute: VirtualTourRoute,
+  VolunteersRoute: VolunteersRoute,
   WelfareSocietyRoute: WelfareSocietyRoute,
   ApiChatRoute: ApiChatRoute,
 }

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHero, Section, Reveal } from "@/components/page-kit";
 import { ShieldCheck } from "lucide-react";
+import backgroundrule from "@/assets/rules-background.jpg";
 
 export const Route = createFileRoute("/rules")({
   head: () => ({
@@ -74,6 +75,7 @@ function RulesPage() {
         title="How we keep BALO safe,"
         highlight="fair and orderly."
         lead="These rules apply to every student and family at Balo English Medium School. They exist so that classes run smoothly, children stay safe and every child is treated equally."
+        image={backgroundrule}
       />
 
       {groups.map((g, gi) => (

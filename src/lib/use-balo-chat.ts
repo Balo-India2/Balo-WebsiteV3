@@ -141,7 +141,12 @@ export function useBaloChat(active: boolean) {
 
         // The endpoint always answers with JSON: { answer } or { error }.
         const raw = await res.text();
-        let payload: { answer?: string; error?: string } = {};
+        let payload: {
+          answer?: string;
+          error?: string;
+          engine?: string;
+          context?: { title: string; body: string }[];
+        } = {};
         try {
           payload = raw ? JSON.parse(raw) : {};
         } catch {
@@ -152,9 +157,24 @@ export function useBaloChat(active: boolean) {
           throw new Error(payload.error || "BALO AI could not answer that. Please try again.");
         }
 
-        const answer = (payload.answer ?? "").trim();
+        let answer = (payload.answer ?? "").trim();
         if (!answer) {
           throw new Error(payload.error || "BALO AI could not answer that. Please try again.");
+        }
+
+        // Assistant mode: if this browser has its own built-in on-device AI,
+        // let it reword the school's verified passages locally for a more
+        // conversational reply. Falls back silently to the server answer.
+        if (mode === "assistant" && payload.context?.length) {
+          try {
+            const { onDeviceAiAvailable, rewriteWithOnDeviceAi } = await import("@/lib/on-device-ai");
+            if (await onDeviceAiAvailable()) {
+              const local = await rewriteWithOnDeviceAi(question, payload.context);
+              if (local) answer = local;
+            }
+          } catch {
+            /* keep the server answer */
+          }
         }
 
         setMsgs((p) => {
@@ -162,6 +182,7 @@ export function useBaloChat(active: boolean) {
           list[list.length - 1] = { role: "assistant", content: answer };
           return { ...p, [mode]: list };
         });
+
       } catch (e: any) {
 
         setError(e?.message ?? "Something went wrong.");
@@ -172,7 +193,6 @@ export function useBaloChat(active: boolean) {
         });
       } finally {
         setBusy(false);
-        inputRef.current?.focus();
       }
     },
     [busy, classLabel, image, mode, sessionKey, subject, topic],

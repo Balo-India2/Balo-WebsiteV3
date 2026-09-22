@@ -1,7 +1,9 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { motion } from "framer-motion";
-import { X } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { X, ZoomIn } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { sampleFor } from "@/components/sample-pool";
+
 
 /** Entrance animation used across the content pages. `once: true` keeps
  *  low-end devices happy — each block animates a single time per page visit. */
@@ -42,34 +44,51 @@ export function PageHero({
   title,
   highlight,
   lead,
+  image,
 }: {
   eyebrow: string;
   title: string;
   highlight?: string;
   lead: string;
+  /** Background photograph shown behind the page title. */
+  image?: string;
 }) {
+  const bg = image;
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
   return (
-    <section className="relative overflow-hidden px-6 pt-28 pb-16">
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-40 left-1/2 size-[34rem] -translate-x-1/2 rounded-full bg-primary/15 blur-3xl" />
-        <div className="absolute -right-24 top-24 size-[20rem] rounded-full bg-accent/15 blur-3xl" />
-      </div>
-      <div className="mx-auto max-w-5xl">
+    <section ref={heroRef} className="relative flex min-h-[70vh] items-center overflow-hidden px-6 pt-24">
+      <motion.div aria-hidden style={{ scale }} className="pointer-events-none absolute inset-0 -z-10 origin-center">
+        {bg && (
+          <img
+            src={bg}
+            alt=""
+            loading="eager"
+            decoding="async"
+            width={1600}
+            height={1024}
+            className="size-full object-cover"
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/85 via-primary/70 to-accent/70" />
+      </motion.div>
+      <div className="mx-auto w-full max-w-7xl text-white">
         <Reveal>
-          <div className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-accent">
+          <div className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-secondary">
             {eyebrow}
           </div>
-          <h1 className="text-balance font-display text-4xl font-black leading-[1.05] md:text-6xl">
-            {title} {highlight && <span className="italic text-primary">{highlight}</span>}
+          <h1 className="text-balance font-display text-5xl font-black leading-[0.95] md:text-7xl">
+            {title} {highlight && <span className="italic text-secondary">{highlight}</span>}
           </h1>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-            {lead}
-          </p>
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/85 md:text-xl">{lead}</p>
         </Reveal>
       </div>
     </section>
   );
 }
+
+
 
 export function Section({
   id,
@@ -109,9 +128,25 @@ export function Section({
  * Replaceable sample images
  *
  * HOW TO REPLACE: drop the real photo into `src/assets/`, import it, and
- * pass it as `src`. Until then a clearly-labelled placeholder is shown, so
- * every sample image on the site is obvious and easy to swap.
+ * pass it as `src`. When no `src` is given, a real BALO photo from
+ * `src/assets` is picked automatically for the label, so every sample slot
+ * always shows a photo while staying easy to swap.
  * ------------------------------------------------------------------ */
+
+/** Small "tap to preview" affordance shown over previewable photos. */
+export function TapHint({ className }: { className?: string }) {
+  return (
+    <span
+      className={cn(
+        "pointer-events-none absolute bottom-2 right-2 z-10 inline-flex items-center gap-1 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur-sm",
+        className,
+      )}
+    >
+      <ZoomIn className="size-3" /> Tap to preview
+    </span>
+  );
+}
+
 export function SampleImage({
   label,
   src,
@@ -123,24 +158,29 @@ export function SampleImage({
   ratio?: string;
   onOpen?: (src: string, label: string) => void;
 }) {
-  const clickable = Boolean(src && onOpen);
+  // Auto-fill with a real photo from src/assets when no explicit src is set.
+  const resolved = src ?? sampleFor(label);
+  const clickable = Boolean(resolved && onOpen);
   return (
     <figure
-      onClick={() => src && onOpen?.(src, label)}
+      onClick={() => resolved && onOpen?.(resolved, label)}
       className={cn(
         "group relative overflow-hidden rounded-3xl border border-border bg-muted/40 shadow-soft",
         clickable && "cursor-zoom-in",
       )}
       style={{ aspectRatio: ratio }}
     >
-      {src ? (
-        <img
-          src={src}
-          alt={label}
-          loading="lazy"
-          decoding="async"
-          className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-        />
+      {resolved ? (
+        <>
+          <img
+            src={resolved}
+            alt={label}
+            loading="lazy"
+            decoding="async"
+            className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+          />
+          {clickable && <TapHint />}
+        </>
       ) : (
         <div className="grid size-full place-items-center bg-gradient-to-br from-primary/10 via-transparent to-accent/10 p-5 text-center">
           <div>
@@ -154,6 +194,7 @@ export function SampleImage({
     </figure>
   );
 }
+
 
 export function SamplePair({
   label,
