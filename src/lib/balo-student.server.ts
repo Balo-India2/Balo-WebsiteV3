@@ -14,9 +14,7 @@ export const DEFAULT_STUDENT_MODEL = "gemini-3.6-flash";
 export const DEFAULT_STUDENT_FALLBACKS = [
   "gemini-3.5-flash",
   "gemini-flash-latest",
-  "gemini-2.0-flash",
 ];
-
 export type StudentTurn = { role: "user" | "assistant"; content: string };
 
 type GeminiPart = { text: string } | { inlineData: { mimeType: string; data: string } };
