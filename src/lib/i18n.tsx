@@ -32,6 +32,10 @@ const dict: Record<string, Record<Lang, string>> = {
 
 };
 
+export function translate(key: string, lang: Lang): string {
+  return dict[key]?.[lang] ?? dict[key]?.en ?? key;
+}
+
 type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (key: string) => string };
 
 const LangCtx = createContext<Ctx>({ lang: "en", setLang: () => {}, t: (k) => k });
@@ -51,7 +55,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     try { localStorage.setItem("balo.lang", l); } catch {}
   };
 
-  const t = (key: string) => dict[key]?.[lang] ?? dict[key]?.en ?? key;
+  const t = (key: string) => translate(key, lang);
 
   return <LangCtx.Provider value={{ lang, setLang, t }}>{children}</LangCtx.Provider>;
 }
