@@ -1,8 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-
-const OWNER_EMAIL = "baloindia2015@gmail.com";
+import { isAuthorizedAdminEmail, OWNER_EMAIL } from "@/lib/admin-owner";
 
 const usernameSchema = z
   .string()
@@ -22,6 +21,12 @@ function invalidCredentials() {
   return new Error("Invalid username or password.");
 }
 
+/** Live site origin for verification emails. Set SITE_URL on AWS, e.g. https://balo.example.com */
+function adminEmailRedirectTo() {
+  const site = process.env.SITE_URL?.trim().replace(/\/$/, "");
+  return site ? `${site}/admin-login` : "";
+}
+
 /**
  * Public server boundary for registration. The Auth identity and profile are
  * created on the server so the internal Auth email never reaches the browser.
@@ -36,12 +41,13 @@ export const registerAdmin = createServerFn({ method: "POST" })
     }).parse(input),
   )
   .handler(async ({ data }) => {
-    const acceptedEmail = "baloindia2015@gmail.com";
-    if (data.adminEmail.trim().toLowerCase() !== acceptedEmail) {
-      throw new Error("Only the authorised admin email can register an administrator.");
+    if (!isAuthorizedAdminEmail(data.adminEmail)) {
+      throw new Error(`Use ${OWNER_EMAIL} — that is the authorised admin email.`);
     }
+    const acceptedEmail = OWNER_EMAIL;
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { createPasswordAuthClient } = await import("@/lib/admin-auth.server");
     const normalized = normalizedUsername(data.username);
     const { data: existingProfile, error: profileLookupError } = await supabaseAdmin
       .from("admin_profiles")
@@ -51,10 +57,12 @@ export const registerAdmin = createServerFn({ method: "POST" })
     if (profileLookupError) throw profileLookupError;
     if (existingProfile) throw new Error("That username is already registered.");
 
-    const { data: authData, error: authError } = await supabaseAdmin.auth.signUp({
+    // Sign up on the anon client so the service-role singleton never holds a user session.
+    const auth = createPasswordAuthClient();
+    const { data: authData, error: authError } = await auth.auth.signUp({
       email: acceptedEmail,
       password: data.password,
-      options: { emailRedirectTo: "" },
+      options: { emailRedirectTo: adminEmailRedirectTo() },
     });
     if (authError) {
       throw new Error("This admin email is already registered or could not be registered.");
@@ -83,6 +91,7 @@ export const signInAdmin = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { passwordGrant } = await import("@/lib/admin-auth.server");
     const { data: profile, error: profileError } = await supabaseAdmin
       .from("admin_profiles")
       .select("user_id, username")
@@ -94,10 +103,10 @@ export const signInAdmin = createServerFn({ method: "POST" })
     const email = userData.user?.email;
     if (userError || !email) throw invalidCredentials();
 
-    const { data: authData, error: authError } = await supabaseAdmin.auth.signInWithPassword({
-      email,
-      password: data.password,
-    });
+    // Password grant on a separate anon client. Signing in on supabaseAdmin would
+    // attach the user JWT to the service-role singleton and RLS would block the
+    // user_roles insert ("new row violates row-level security policy").
+    const { data: authData, error: authError } = await passwordGrant(email, data.password);
     if (authError || !authData.session || !authData.user) {
       if (authError?.message && /confirm|verify/i.test(authError.message)) {
         throw new Error("EMAIL_NOT_VERIFIED: Verify the admin email before signing in.");
@@ -121,10 +130,10 @@ export const resendAdminVerification = createServerFn({ method: "POST" })
     z.object({ username: usernameSchema, adminEmail: adminEmailSchema }).parse(input),
   )
   .handler(async ({ data }) => {
-    const acceptedEmail = "baloindia2015@gmail.com";
-    if (data.adminEmail.trim().toLowerCase() !== acceptedEmail) {
-      throw new Error("Only the authorised admin email can be verified.");
+    if (!isAuthorizedAdminEmail(data.adminEmail)) {
+      throw new Error(`Use ${OWNER_EMAIL} — that is the authorised admin email.`);
     }
+    const acceptedEmail = OWNER_EMAIL;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: profile } = await supabaseAdmin
       .from("admin_profiles")
@@ -132,7 +141,11 @@ export const resendAdminVerification = createServerFn({ method: "POST" })
       .eq("normalized_username", normalizedUsername(data.username))
       .maybeSingle();
     if (!profile) throw new Error("We could not verify those admin details.");
-    const { error } = await supabaseAdmin.auth.resend({ type: "signup", email: acceptedEmail });
+    const { error } = await supabaseAdmin.auth.resend({
+      type: "signup",
+      email: acceptedEmail,
+      options: { emailRedirectTo: adminEmailRedirectTo() },
+    });
     if (error) throw new Error("Could not resend the verification email.");
     return { ok: true };
   });
@@ -151,8 +164,7 @@ export const recoverAdminPassword = createServerFn({ method: "POST" })
     }).parse(input),
   )
   .handler(async ({ data }) => {
-    const acceptedEmail = "baloindia2015@gmail.com";
-    if (data.adminEmail.trim().toLowerCase() !== acceptedEmail) {
+    if (!isAuthorizedAdminEmail(data.adminEmail)) {
       throw new Error("We could not verify those admin details.");
     }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -164,7 +176,7 @@ export const recoverAdminPassword = createServerFn({ method: "POST" })
     if (!profile) throw new Error("We could not verify those admin details.");
 
     const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(profile.user_id);
-    if (userError || userData.user?.email?.toLowerCase() !== acceptedEmail) {
+    if (userError || !userData.user?.email || !isAuthorizedAdminEmail(userData.user.email)) {
       throw new Error("We could not verify those admin details.");
     }
     const { error } = await supabaseAdmin.auth.admin.updateUserById(profile.user_id, { password: data.password });

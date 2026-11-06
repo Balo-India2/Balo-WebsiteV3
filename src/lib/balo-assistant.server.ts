@@ -57,6 +57,7 @@ export function rankSections(question: string, sections: ContextSection[], limit
   const unique = Array.from(new Set(terms));
 
   const scored = sections.map((section) => {
+    const title = section.title.toLowerCase();
     const haystack = `${section.title} ${section.title} ${section.body}`.toLowerCase();
     let score = 0;
     for (const term of unique) {
@@ -64,14 +65,15 @@ export function rankSections(question: string, sections: ContextSection[], limit
       if (!hits) continue;
       // Diminishing returns per term, extra weight for rarer/longer words.
       score += Math.min(hits, 4) * (1 + term.length / 12);
+      if (title.includes(term)) score += 8;
     }
     return { section, score };
   });
 
-  return scored
-    .filter((s) => s.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit);
+  const ranked = scored.filter((s) => s.score > 0).sort((a, b) => b.score - a.score);
+  const top = ranked[0]?.score ?? 0;
+  const floor = Math.max(1.8, top * 0.4);
+  return ranked.filter((s) => s.score >= floor).slice(0, limit);
 }
 
 const GENERAL_QUESTION =
@@ -93,7 +95,7 @@ function trimBody(body: string, max: number) {
  * optionally reword them client-side.
  */
 export function composeAssistantAnswer(question: string, sections: ContextSection[]) {
-  const ranked = rankSections(question, sections, 4);
+  const ranked = rankSections(question, sections, 3);
 
   if (!ranked.length) {
     const fallback = GENERAL_QUESTION.test(question)

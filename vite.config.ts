@@ -12,4 +12,13 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // AWS Lightsail / any Node host. Lovable's own build still pins Cloudflare.
+  nitro: {
+    preset: "node-server",
+  },
+  vite: {
+    server: {
+      allowedHosts: true,
+    },
+  },
 });

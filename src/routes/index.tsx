@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useLightbox, TapHint } from "@/components/page-kit";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "@/lib/limited-motion";
+import { useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
-  BookOpen, Heart, Users, Star, MapPin, Phone, Mail, ArrowRight,
+  BookOpen, Heart, Users, Star, MapPin, Mail, ArrowRight, Send,
   Sparkles, HandHeart, Quote,
 } from "lucide-react";
 
@@ -12,7 +13,6 @@ import hero from "@/assets/hero-classroom.jpg";
 import reading from "@/assets/classroom-reading.jpg";
 import teacher from "@/assets/activities7.jpeg";
 import story from "@/assets/teacher-board.jpg";
-import group from "@/assets/group-students.jpg";
 import portrait from "@/assets/student-portrait.jpg";
 import playground from "@/assets/playground.jpg";
 import hands from "@/assets/raised-hands.jpg";
@@ -30,7 +30,7 @@ import happySeason from "@/assets/drive-gallery2-02.jpg";
 import studentAssembly from "@/assets/drive-gallery2-07.jpg";
 import nonFireCooking from "@/assets/drive-gallery2-10.jpg";
 
-import communityVoiceBg from "@/assets/community-voice.png";
+import communityVoiceBg from "@/assets/community-voice.jpg";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { LazyImage } from "@/components/LazyImage";
 
@@ -56,7 +56,7 @@ export const Route = createFileRoute("/")({
         "@context": "https://schema.org",
         "@type": "School",
         name: "Balo English Medium School",
-        address: { "@type": "PostalAddress", streetAddress: "55 Pilkhana 2nd Bye Lane", addressLocality: "Howrah Salkia", addressRegion: "West Bengal", postalCode: "711101", addressCountry: "IN" },
+        address: { "@type": "PostalAddress", streetAddress: "55, Madar Talla Lane, Babudanga, Pilkhana", addressLocality: "Salkia, Howrah", addressRegion: "West Bengal", postalCode: "711101", addressCountry: "IN" },
         aggregateRating: { "@type": "AggregateRating", ratingValue: "4.4", reviewCount: "15" },
       }),
     }],
@@ -82,7 +82,13 @@ function HeroCarousel() {
   const [active, setActive] = useState(0);
 
   useEffect(() => {
+    let plays = 0;
     const timer = window.setInterval(() => {
+      plays += 1;
+      if (plays > 3) {
+        window.clearInterval(timer);
+        return;
+      }
       setActive((current) => (current + 1) % heroSlides.length);
     }, 3500);
 
@@ -139,7 +145,7 @@ function Hero() {
 
   return (
     <section ref={ref} id="top" className="relative min-h-screen flex items-center overflow-hidden pt-24">
-      <motion.div style={{ y, scale }} className="absolute inset-0 -z-10">
+      <motion.div style={{ y, scale }} className="absolute inset-0 -z-10 will-change-transform">
         <img src={hero} alt="Children at Balo English Medium School" className="size-full object-cover" width={1600} height={1024} />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/85 via-primary/60 to-accent/70" />
       </motion.div>
@@ -153,7 +159,7 @@ function Hero() {
             Every child deserves <span className="italic text-secondary">a chance to dream.</span>
           </motion.h1>
           <motion.p initial="hidden" animate="show" variants={fadeUp} custom={2} className="mt-6 text-lg md:text-xl text-white/85 max-w-xl">
-            Balo English Medium School is a worldwide community-run NGO delivering free, quality English-medium education to the children of Babudanga, Pilkhana — one classroom, one bright future at a time.
+            Balo English Medium School is a community-run NGO delivering free, quality English-medium education to the children of Babudanga and Pilkhana — one classroom, one bright future at a time.
           </motion.p>
           <motion.div initial="hidden" animate="show" variants={fadeUp} custom={3} className="mt-9 flex flex-wrap gap-4">
             <a href="#donate" className="group inline-flex items-center gap-2 rounded-full bg-white text-primary px-7 py-3.5 font-semibold shadow-soft hover:bg-secondary hover:text-secondary-foreground transition-all">
@@ -164,8 +170,17 @@ function Hero() {
             </a>
           </motion.div>
           <motion.div initial="hidden" animate="show" variants={fadeUp} custom={4} className="mt-10 flex items-center gap-6">
-            <div className="flex">
-              {[0,1,2,3,4].map(i => <Star key={i} className="size-5 fill-secondary text-secondary" />)}
+            <div className="flex" aria-label="4.4 out of 5 stars">
+              {[0, 1, 2, 3].map((i) => (
+                <Star key={i} className="size-5 fill-secondary text-secondary" />
+              ))}
+              <span className="relative size-5">
+                <Star className="size-5 text-secondary/35" />
+                <Star
+                  className="absolute inset-0 size-5 fill-secondary text-secondary"
+                  style={{ clipPath: "inset(0 60% 0 0)" }}
+                />
+              </span>
             </div>
             <div className="text-sm text-white/80"><span className="font-bold text-white">4.4</span> · 15 Google reviews</div>
           </motion.div>
@@ -179,7 +194,7 @@ function Hero() {
         </div>
       </div>
 
-      <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }}
+      <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: 3 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/70 text-xs tracking-widest uppercase">
         Scroll
       </motion.div>
@@ -202,7 +217,7 @@ function Stats() {
             key={s.l}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={fadeUp}
             custom={i}
             whileHover={{ scale: 1.05 }}
@@ -223,11 +238,11 @@ function About() {
   return (
     <section id="about" className="py-28 px-6">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-        <motion.div initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, amount: 0.2 }} transition={{ duration: 0.8 }}
+        <motion.div initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.8 }}
           className="relative">
           <img src={story} alt="Teacher at Balo English Medium School" width={1200} height={900} loading="lazy"
             className="rounded-3xl shadow-card w-full aspect-[4/5] object-cover" />
-          <motion.div animate={{ rotate: [0, 3, 0, -3, 0] }} transition={{ duration: 8, repeat: Infinity }}
+          <motion.div animate={{ rotate: [0, 3, 0, -3, 0] }} transition={{ duration: 8, repeat: 3 }}
             className="absolute -bottom-8 -right-4 md:-right-12 bg-card rounded-2xl p-6 shadow-card max-w-xs">
             <Quote className="size-7 text-accent mb-2" />
             <p className="text-sm italic">"Education is the spark that lights up an entire neighborhood."</p>
@@ -235,7 +250,7 @@ function About() {
           </motion.div>
         </motion.div>
 
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.2 }} variants={fadeUp}>
+        <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={fadeUp}>
           <div className="text-xs uppercase tracking-[0.2em] text-accent font-bold mb-4">Our Story</div>
           <h2 className="text-balance text-4xl md:text-5xl font-bold leading-tight">
             A neighborhood school built on love, run by hope.
@@ -257,7 +272,7 @@ function About() {
                 key={f.t}
                 initial={{ opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.5, delay: i * 0.06 }}
                 whileHover={{ scale: 1.05, y: -4 }}
                 className="flex gap-3 p-4 rounded-2xl bg-card border border-border cursor-default shadow-soft"
@@ -286,13 +301,13 @@ function Programs() {
   return (
     <section id="programs" className="py-28 px-6 bg-card">
       <div className="max-w-7xl mx-auto">
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.2 }} variants={fadeUp} className="max-w-2xl">
+        <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={fadeUp} className="max-w-2xl">
           <div className="text-xs uppercase tracking-[0.2em] text-accent font-bold mb-4">What We Do</div>
           <h2 className="text-4xl md:text-5xl font-bold">Programs that meet children where they are.</h2>
         </motion.div>
         <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {items.map((it, i) => (
-            <motion.article key={it.t} initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.2 }} variants={fadeUp} custom={i}
+            <motion.article key={it.t} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={fadeUp} custom={i}
               whileHover={{ y: -8 }}
               className="group rounded-3xl overflow-hidden bg-background border border-border shadow-soft">
               <div className="aspect-[4/3] overflow-hidden">
@@ -328,7 +343,7 @@ function Gallery() {
   return (
     <section id="gallery" className="py-28 px-6">
       <div className="max-w-7xl mx-auto">
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.2 }} variants={fadeUp} className="flex items-end justify-between flex-wrap gap-6 mb-12">
+        <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={fadeUp} className="flex items-end justify-between flex-wrap gap-6 mb-12">
           <div>
             <div className="text-xs uppercase tracking-[0.2em] text-accent font-bold mb-4">Gallery</div>
             <h2 className="text-4xl md:text-5xl font-bold max-w-xl text-balance">Moments from our classrooms.</h2>
@@ -341,7 +356,7 @@ function Gallery() {
             <motion.div key={i}
               initial={{ opacity: 0, scale: 0.92 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: false, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.6, delay: i * 0.05 }}
               whileHover={{ scale: 1.02 }}
               onClick={() => lightbox.open(im.src, im.a)}
@@ -383,7 +398,7 @@ function Impact() {
         backgroundSize: "40px 40px, 60px 60px",
       }} />
       <div className="relative max-w-5xl mx-auto text-center">
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.2 }} variants={fadeUp}>
+        <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={fadeUp}>
           <div className="text-xs uppercase tracking-[0.25em] text-secondary font-bold mb-5">Voices from the Community</div>
           <Quote className="size-12 mx-auto opacity-60" />
           <p className="mt-6 text-2xl md:text-4xl font-display font-medium text-balance leading-snug">
@@ -398,14 +413,14 @@ function Impact() {
 
 function Donate() {
   return (
-    <section id="donate" className="py-28 px-6">
-      <motion.div initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.2 }} variants={fadeUp}
+    <section id="donate" className="scroll-mt-32 py-28 px-6">
+      <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={fadeUp}
         className="max-w-5xl mx-auto rounded-[2rem] gradient-warm border border-border p-10 md:p-16 text-center shadow-card">
         <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 text-accent px-4 py-1.5 text-xs font-semibold mb-6">
           <HandHeart className="size-4" /> Be part of the story
         </div>
         <h2 className="text-4xl md:text-6xl font-bold text-balance leading-tight">
-          ₹500 sends a child to school for <span className="text-accent italic">a whole month.</span>
+          Help a child keep learning, eating, and belonging <span className="text-accent italic">this month.</span>
         </h2>
         <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
           Your gift funds books, uniforms, a warm meal, and a teacher who shows up every single day. 100% of your donation reaches our classrooms.
@@ -425,30 +440,48 @@ function Donate() {
 
 function Contact() {
   return (
-    <section id="contact" className="py-28 px-6 bg-card">
+    <section id="contact" className="scroll-mt-32 py-28 px-6 bg-card">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16">
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.2 }} variants={fadeUp}>
-          <div className="text-xs uppercase tracking-[0.2em] text-accent font-bold mb-4">Visit · Call · Write</div>
+        <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={fadeUp}>
+          <div className="text-xs uppercase tracking-[0.2em] text-accent font-bold mb-4">Visit · Write · Enquire</div>
           <h2 className="text-4xl md:text-5xl font-bold mb-8 text-balance">Come see our school, anytime.</h2>
           <div className="space-y-6">
-            {[
-              { icon: MapPin, t: "Our Address", d: "55 Pilkhana 2nd Bye Lane, Howrah Salkia 711101" },
-              { icon: Phone, t: "Call Us", d: "Reach out to schedule a visit or learn more." },
-              { icon: Mail, t: "Email", d: "baloindia2015@gmail.com" },
-            ].map((c) => (
-              <div key={c.t} className="flex gap-4">
-                <div className="size-12 rounded-2xl bg-primary/10 text-primary grid place-items-center shrink-0">
-                  <c.icon className="size-5" />
-                </div>
-                <div>
-                  <div className="font-semibold">{c.t}</div>
-                  <div className="text-muted-foreground text-sm mt-1 max-w-sm">{c.d}</div>
+            <div className="flex gap-4">
+              <div className="size-12 rounded-2xl bg-primary/10 text-primary grid place-items-center shrink-0">
+                <MapPin className="size-5" />
+              </div>
+              <div>
+                <div className="font-semibold">Our Address</div>
+                <div className="text-muted-foreground text-sm mt-1 max-w-sm">
+                  55, Madar Talla Lane, Babudanga, Pilkhana, Salkia, Howrah, West Bengal 711101
                 </div>
               </div>
-            ))}
+            </div>
+            <div className="flex gap-4">
+              <div className="size-12 rounded-2xl bg-primary/10 text-primary grid place-items-center shrink-0">
+                <Mail className="size-5" />
+              </div>
+              <div>
+                <div className="font-semibold">Email</div>
+                <a href="mailto:baloindia2015@gmail.com" className="text-muted-foreground text-sm mt-1 max-w-sm block hover:text-primary underline-offset-2 hover:underline">
+                  baloindia2015@gmail.com
+                </a>
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="size-12 rounded-2xl bg-primary/10 text-primary grid place-items-center shrink-0">
+                <Send className="size-5" />
+              </div>
+              <div>
+                <div className="font-semibold">Send an enquiry</div>
+                <Link to="/enquiry" className="text-muted-foreground text-sm mt-1 max-w-sm block hover:text-primary underline-offset-2 hover:underline">
+                  Admissions, volunteering or a visit — the office replies by email.
+                </Link>
+              </div>
+            </div>
           </div>
         </motion.div>
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: false, amount: 0.2 }} transition={{ duration: 0.7 }}
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.7 }}
           className="rounded-3xl overflow-hidden shadow-card aspect-square lg:aspect-auto">
           <iframe
             title="Balo English Medium School location"
@@ -470,7 +503,7 @@ function Banner() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.8 }}
           className="text-center mb-8"
         >
@@ -480,7 +513,7 @@ function Banner() {
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.9 }}
           className="rounded-3xl overflow-hidden shadow-card"
         >

@@ -6,6 +6,7 @@ import staffNew from "@/assets/staff-all.jpg";
 import teacherBoard from "@/assets/teaching2.jpg";
 import mealPrep from "@/assets/non-teaching2.jpg";
 import kitchen2 from "@/assets/non-teaching.jpg";
+import ranjitPhoto from "@/assets/manager-ranjit-mishra.jpg";
 
 
 export const Route = createFileRoute("/staff")({
@@ -46,7 +47,7 @@ function StaffPage() {
       <Section eyebrow="Leadership" title="Mr. Ranjit Mishra — Manager">
         <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_1.2fr]">
           <Reveal>
-            <SampleImage label="Mr. Ranjit Mishra, Manager" ratio="4 / 5" onOpen={lightbox.open} />
+            <SampleImage label="Mr. Ranjit Mishra, Manager" src={ranjitPhoto} ratio="4 / 5" onOpen={lightbox.open} />
           </Reveal>
           <Reveal i={1}>
             <div className="space-y-4 leading-relaxed text-muted-foreground">

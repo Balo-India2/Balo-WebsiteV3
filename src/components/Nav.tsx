@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import baloLogo from "@/assets/balo-logo.jpg";
 import { useLang, type Lang } from "@/lib/i18n";
 import { useUnreadNotices } from "@/lib/notices";
+import { useAdminSession } from "@/lib/use-admin-session";
 
 type NavItem = {
   key: string;
@@ -40,6 +41,7 @@ const navGroups: NavGroup[] = [
     key: "navgroup.about",
     items: [
       { key: "nav.about", href: "/about" },
+      { key: "nav.staff", href: "/staff" },
       { key: "nav.volunteers", href: "/volunteers" },
       { key: "nav.developers", href: "/developers" },
     ],
@@ -72,6 +74,7 @@ const navGroups: NavGroup[] = [
       { key: "nav.contact", href: "/", hash: "contact" },
       { key: "nav.enquiry", href: "/enquiry" },
       { key: "nav.faq", href: "/faq" },
+      { key: "nav.admin", href: "/admin-login" },
     ],
   },
 ];
@@ -151,9 +154,14 @@ export function Nav() {
 
   const { t } = useLang();
   const hasUnreadNotices = useUnreadNotices();
+  const admin = useAdminSession();
+
+  const currentGroupKey =
+    navGroups.find((g) =>
+      g.items.some((i) => !i.hash && i.href === pathname),
+    )?.key ?? null;
 
   useEffect(() => {
-    setOpenGroup(null);
     setMobileOpen(false);
   }, [pathname]);
 
@@ -177,7 +185,7 @@ export function Nav() {
         if (!el) return;
 
         const top =
-          el.getBoundingClientRect().top + window.scrollY - 80;
+          el.getBoundingClientRect().top + window.scrollY - 130;
 
         window.scrollTo({
           top,
@@ -200,10 +208,24 @@ export function Nav() {
     mobile = false,
     inMenu = false,
   ) => {
+    const itemHref = item.key === "nav.admin" ? admin.href : item.href;
+    const itemLabel = item.key === "nav.admin"
+      ? t(admin.signedIn ? "nav.admin" : "nav.adminLogin")
+      : t(item.key);
+    const isCurrent = !item.hash && itemHref === pathname;
+
     const className = mobile
-      ? "block text-sm font-medium text-foreground/70 hover:text-foreground cursor-pointer"
+      ? `block text-sm font-medium cursor-pointer ${
+          isCurrent
+            ? "font-semibold text-foreground"
+            : "text-foreground/70 hover:text-foreground"
+        }`
       : inMenu
-        ? "rounded-xl px-3 py-2 text-sm font-medium text-foreground/75 hover:bg-muted hover:text-foreground cursor-pointer"
+        ? `rounded-xl px-3 py-2 text-sm font-medium cursor-pointer ${
+            isCurrent
+              ? "bg-accent/15 font-semibold text-foreground"
+              : "text-foreground/75 hover:bg-muted hover:text-foreground"
+          }`
         : linkClasses;
 
     const showDot = item.notice && hasUnreadNotices;
@@ -231,7 +253,7 @@ export function Nav() {
     return (
       <Link
         key={item.key}
-        to={item.href}
+        to={itemHref}
         className={`${className} relative`}
         activeProps={{
           className: `${className} relative text-foreground font-semibold`,
@@ -241,10 +263,16 @@ export function Nav() {
         }}
         onClick={() => {
           setMobileOpen(false);
-          setOpenGroup(null);
         }}
       >
-        {t(item.key)}
+        {item.key === "nav.admin" ? (
+          <span className="inline-flex items-center gap-2">
+            <UserCircle2 className="size-4" />
+            {itemLabel}
+          </span>
+        ) : (
+          itemLabel
+        )}
         {dot}
       </Link>
     );
@@ -307,7 +335,7 @@ export function Nav() {
                   }
                   className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
                     groupActive
-                      ? "font-semibold text-foreground"
+                      ? "bg-accent/10 font-semibold text-foreground"
                       : "text-foreground/70 hover:text-foreground"
                   }`}
                 >
@@ -352,15 +380,6 @@ export function Nav() {
 
           <LangSwitcher />
 
-          <Link
-            to="/admin-login"
-            aria-label="Admin login"
-            title="Admin login"
-            className="grid size-9 place-items-center rounded-full border border-border text-foreground/70 transition-colors hover:bg-muted hover:text-foreground"
-          >
-            <UserCircle2 className="size-5" />
-          </Link>
-
           <a
             href={DONATE_URL}
             target="_blank"
@@ -374,17 +393,14 @@ export function Nav() {
 
         {/* Mobile account and menu actions */}
         <div className="flex items-center gap-1 lg:hidden">
-          <Link
-            to="/admin-login"
-            aria-label="Admin login"
-            title="Admin login"
-            className="grid size-9 place-items-center rounded-full border border-border text-foreground/70 transition-colors hover:bg-muted hover:text-foreground"
-          >
-            <UserCircle2 className="size-5" />
-          </Link>
           <button
             className="relative rounded-lg p-2 transition-colors hover:bg-muted"
-            onClick={() => setMobileOpen(!mobileOpen)}
+            onClick={() => {
+              setMobileOpen((open) => {
+                if (!open) setOpenGroup(currentGroupKey);
+                return !open;
+              });
+            }}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >
             {mobileOpen ? <X className="size-6" /> : <Menu className="size-6" />}
@@ -420,7 +436,11 @@ export function Nav() {
                           : group.key,
                       )
                     }
-                    className="flex w-full items-center justify-between px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground"
+                    className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-[0.2em] ${
+                      currentGroupKey === group.key
+                        ? "text-accent"
+                        : "text-muted-foreground"
+                    }`}
                     aria-expanded={
                       openGroup === group.key
                     }
@@ -469,12 +489,12 @@ export function Nav() {
               </div>
 
               <Link
-                to="/admin-login"
+                to={admin.href}
                 onClick={() => setMobileOpen(false)}
                 className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold"
               >
                 <UserCircle2 className="size-4" />
-                Admin login
+                {admin.label}
               </Link>
 
               <div className="pt-2">

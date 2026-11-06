@@ -2,9 +2,9 @@ import { Megaphone } from "lucide-react";
 import { useLiveAnnouncements } from "@/lib/public-content";
 
 const FALLBACK = [
-  "🇮🇳 Visit us at 55 Pilkhana 2nd Bye Lane, Salkia",
+  "🇮🇳 Visit us at 55, Madar Talla Lane, Salkia, Howrah",
   "📅 Sports Day 2026 arrives this December — save the date",
-  "💛 Support a child today — ₹500 sends one student to school for a full month",
+  "💛 Support a child today — books, a meal, and a classroom that welcomes them",
 ];
 
 /**
@@ -36,8 +36,8 @@ export function AnnouncementBanner() {
           to   { transform: translate3d(-50%,0,0); }
         }
         .balo-marquee-track {
-          animation: balo-marquee 35s linear infinite;
-            will-change: transform;
+          animation: balo-marquee 35s linear 3 both;
+          will-change: transform;
         }
         @media (max-width: 640px) {
           .balo-marquee-track { animation-duration: 22s; }

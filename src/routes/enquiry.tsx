@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Loader2, Send, CheckCircle2, Mail, MapPin } from "lucide-react";
 import { PageHero, Section, Reveal } from "@/components/page-kit";
 import { submitEnquiry } from "@/lib/ai.functions";
+import reception from "@/assets/reception1.jpg";
 
 export const Route = createFileRoute("/enquiry")({
   head: () => ({
@@ -69,6 +70,7 @@ function EnquiryPage() {
         title="Talk to the school"
         highlight="office."
         lead="Admissions, volunteering, donations or a simple question — send us a note and our office will get back to you by email."
+        image={reception}
       />
 
       <Section>

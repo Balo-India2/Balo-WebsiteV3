@@ -4,7 +4,7 @@ import { PageHero, Section, Reveal, SamplePair, useLightbox } from "@/components
 import hallA from "@/assets/hall1.jpg";
 import hallB from "@/assets/hall2.jpg";
 import staffA from "@/assets/staff-group.jpg";
-import staffB from "@/assets/staff-room.jpg";
+import staffB from "@/assets/teaching1.jpg";
 import compA from "@/assets/comp1.jpg";
 import compB from "@/assets/comp2.jpg";
 import labA from "@/assets/lab1.jpg";
@@ -47,7 +47,7 @@ const stops: { title: string; desc: string; images?: [string?, string?] }[] = [
   {
     title: "Staff Room",
     desc: "The working heart of our teaching team. Teachers plan lessons, prepare worksheets, correct copies and meet for academic coordination — reviewing each class's progress, agreeing on the term's syllabus pace and discussing children who need extra support.",
-    images: [staffA, undefined],
+    images: [staffA, staffB],
   },
   {
     title: "Computer Room",

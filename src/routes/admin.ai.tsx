@@ -21,7 +21,7 @@ function AdminAiPage() {
       <div>
         <h1 className="text-3xl font-bold">BALO AI</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Switch each AI mode on or off, tune how it behaves, and manage the classes and subjects the
+          Switch each AI mode on or off, tune how it behaves, and manage the classes the
           Student tutor supports.
         </p>
       </div>
@@ -115,83 +115,67 @@ function CurriculumSection() {
   const upsertFn = useServerFn(upsertCurriculumItem);
   const delFn = useServerFn(deleteCurriculumItem);
   const [classes, setClasses] = useState<Item[]>([]);
-  const [subjects, setSubjects] = useState<Item[]>([]);
   const [newClass, setNewClass] = useState("");
-  const [newSubject, setNewSubject] = useState("");
 
   const load = async () => {
     const r = await listFn();
     setClasses(r.classes as Item[]);
-    setSubjects(r.subjects as Item[]);
   };
   useEffect(() => { load(); }, []);
 
-  const add = async (kind: "class" | "subject", name: string, count: number) => {
+  const add = async (name: string) => {
     if (!name.trim()) return;
-    await upsertFn({ data: { kind, name: name.trim(), sort_order: count + 1, is_active: true } });
-    kind === "class" ? setNewClass("") : setNewSubject("");
+    await upsertFn({ data: { kind: "class", name: name.trim(), sort_order: classes.length + 1, is_active: true } });
+    setNewClass("");
     load();
   };
 
-  const toggle = async (kind: "class" | "subject", item: Item) => {
-    await upsertFn({ data: { kind, id: item.id, name: item.name, sort_order: item.sort_order, is_active: !item.is_active } });
+  const toggle = async (item: Item) => {
+    await upsertFn({ data: { kind: "class", id: item.id, name: item.name, sort_order: item.sort_order, is_active: !item.is_active } });
     load();
   };
 
-  const remove = async (kind: "class" | "subject", id: string) => {
-    await delFn({ data: { kind, id } });
+  const remove = async (id: string) => {
+    await delFn({ data: { kind: "class", id } });
     load();
   };
-
-  const panel = (
-    kind: "class" | "subject",
-    label: string,
-    items: Item[],
-    value: string,
-    setValue: (v: string) => void,
-  ) => (
-    <div className="rounded-2xl border border-border bg-card p-5">
-      <h3 className="font-semibold">{label}</h3>
-      <div className="mt-3 flex gap-2">
-        <input
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder={kind === "class" ? "e.g. Class 9" : "e.g. Mathematics"}
-          className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
-        />
-        <button
-          onClick={() => add(kind, value, items.length)}
-          className="inline-flex items-center gap-1 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm"
-        >
-          <Plus className="size-4" /> Add
-        </button>
-      </div>
-      <ul className="mt-3 divide-y divide-border">
-        {items.map((it) => (
-          <li key={it.id} className="flex items-center justify-between py-2 text-sm">
-            <span className={it.is_active ? "" : "text-muted-foreground line-through"}>{it.name}</span>
-            <span className="flex items-center gap-2">
-              <button onClick={() => toggle(kind, it)} className="text-xs text-muted-foreground hover:text-foreground">
-                {it.is_active ? "Hide" : "Show"}
-              </button>
-              <button onClick={() => remove(kind, it.id)} className="text-muted-foreground hover:text-destructive">
-                <Trash2 className="size-4" />
-              </button>
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
 
   return (
     <section className="space-y-4">
       <h2 className="flex items-center gap-2 text-lg font-bold">
-        <GraduationCap className="size-4 text-primary" /> Supported curriculum
+        <GraduationCap className="size-4 text-primary" /> Supported classes
       </h2>
-      <div className="grid gap-5 lg:grid-cols-2">
-        {panel("class", "Classes", classes, newClass, setNewClass)}
-        {panel("subject", "Subjects", subjects, newSubject, setNewSubject)}
+      <div className="rounded-2xl border border-border bg-card p-5 max-w-xl">
+        <h3 className="font-semibold">Classes</h3>
+        <div className="mt-3 flex gap-2">
+          <input
+            value={newClass}
+            onChange={(e) => setNewClass(e.target.value)}
+            placeholder="e.g. Class 9"
+            className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
+          />
+          <button
+            onClick={() => add(newClass)}
+            className="inline-flex items-center gap-1 rounded-md bg-primary text-primary-foreground px-3 py-2 text-sm"
+          >
+            <Plus className="size-4" /> Add
+          </button>
+        </div>
+        <ul className="mt-3 divide-y divide-border">
+          {classes.map((it) => (
+            <li key={it.id} className="flex items-center justify-between py-2 text-sm">
+              <span className={it.is_active ? "" : "text-muted-foreground line-through"}>{it.name}</span>
+              <span className="flex items-center gap-2">
+                <button onClick={() => toggle(it)} className="text-xs text-muted-foreground hover:text-foreground">
+                  {it.is_active ? "Hide" : "Show"}
+                </button>
+                <button onClick={() => remove(it.id)} className="text-muted-foreground hover:text-destructive">
+                  <Trash2 className="size-4" />
+                </button>
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

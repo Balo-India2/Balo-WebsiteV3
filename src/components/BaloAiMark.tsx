@@ -7,23 +7,25 @@ import baloAiLogo from "@/assets/balo-ai-logo.png";
 export function BaloAiMark({
   className,
   glow = false,
+  alt = "",
 }: {
   className?: string;
   glow?: boolean;
+  alt?: string;
 }) {
   return (
     <span className={cn("relative inline-grid place-items-center", className)}>
       {glow && (
         <span
           aria-hidden
-          className="absolute inset-0 rounded-full bg-primary/30 blur-md"
+          className="absolute inset-[-22%] rounded-full bg-secondary/40 blur-xl"
         />
       )}
       <img
         src={baloAiLogo}
-        alt=""
-        aria-hidden="true"
-        className="relative size-full rounded-full object-cover shadow-sm ring-1 ring-border"
+        alt={alt}
+        aria-hidden={alt ? undefined : true}
+        className="relative size-full rounded-full object-cover"
       />
     </span>
   );

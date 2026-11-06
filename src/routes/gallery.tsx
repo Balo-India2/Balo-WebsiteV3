@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PageHero, Section, Reveal, useLightbox } from "@/components/page-kit";
+import { PageHero, Section, Reveal, TapHint, useLightbox } from "@/components/page-kit";
 
 import g1 from "@/assets/drive-gallery2-01.jpg";
 import g2 from "@/assets/drive-gallery2-02.jpg";
@@ -92,8 +92,9 @@ function GalleryPage() {
             <Reveal key={p.label} i={i}>
               <button
                 onClick={() => lightbox.open(p.src, p.label)}
-                className="group block w-full overflow-hidden rounded-[2rem] border border-border shadow-soft"
+                className="group relative block w-full overflow-hidden rounded-[2rem] border border-border shadow-soft"
               >
+                <TapHint />
                 <img
                   src={p.src}
                   alt={p.label}

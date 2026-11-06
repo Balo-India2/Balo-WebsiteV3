@@ -21,7 +21,15 @@ export function MediaCarousel({
   const [active, setActive] = useState(0);
   useEffect(() => {
     if (images.length < 2) return;
-    const t = window.setInterval(() => setActive((i) => (i + 1) % images.length), interval);
+    let plays = 0;
+    const t = window.setInterval(() => {
+      plays += 1;
+      if (plays > 3) {
+        window.clearInterval(t);
+        return;
+      }
+      setActive((i) => (i + 1) % images.length);
+    }, interval);
     return () => window.clearInterval(t);
   }, [images.length, interval]);
   return (

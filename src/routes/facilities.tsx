@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useLightbox, TapHint } from "@/components/page-kit";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "@/lib/limited-motion";
+import { useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
   BookOpen, Monitor, FlaskConical, Presentation, Wind, Stethoscope, UtensilsCrossed, CheckCircle2,
@@ -119,12 +120,12 @@ const facilities = [
 function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
 
   return (
     <section ref={ref} className="relative min-h-[70vh] flex items-center overflow-hidden pt-24">
-      <motion.div style={{ y, scale }} className="absolute inset-0 -z-10">
+      <motion.div style={{ y, scale }} className="absolute inset-0 -z-10 will-change-transform">
         <img
           src={hero}
           alt="Balo English Medium School classroom"
@@ -209,7 +210,7 @@ function FacilitiesGrid() {
         <motion.div
           initial="hidden"
           whileInView="show"
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           variants={fadeUp}
           className="max-w-3xl mb-16"
         >
@@ -230,7 +231,7 @@ function FacilitiesGrid() {
               key={f.title}
               initial="hidden"
               whileInView="show"
-              viewport={{ once: false, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.2 }}
               variants={fadeUp}
               custom={i}
               whileHover={{ y: -8 }}
@@ -289,7 +290,7 @@ function CTA() {
       <motion.div
         initial="hidden"
         whileInView="show"
-        viewport={{ once: false, amount: 0.2 }}
+        viewport={{ once: true, amount: 0.2 }}
         variants={fadeUp}
         className="max-w-4xl mx-auto text-center"
       >

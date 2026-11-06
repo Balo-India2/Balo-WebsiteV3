@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "@/lib/limited-motion";
+import { useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import {
   Trophy, Sun, Activity, PartyPopper, Music, Sparkles, Calendar, MapPin, ArrowRight,
 } from "lucide-react";
 
 import sportsDay from "@/assets/sports-day.jpg";
-import summerCamp3 from "@/assets/drive3-24.jpg";
 import summer25a from "@/assets/summer25-new-01.jpg";
 import summer25b from "@/assets/summer25-new-02.jpg";
 import summer26a from "@/assets/summer26-new-01.jpg";
@@ -122,12 +122,12 @@ const activities: Activity[] = [
 function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
 
   return (
     <section ref={ref} className="relative min-h-[70vh] flex items-center overflow-hidden pt-24">
-      <motion.div style={{ y, scale }} className="absolute inset-0 -z-10">
+      <motion.div style={{ y, scale }} className="absolute inset-0 -z-10 will-change-transform">
         <img
           src={hero}
           alt="Children playing at Balo English Medium School"
@@ -163,7 +163,7 @@ function ActivitiesGrid() {
         <motion.div
           initial="hidden"
           whileInView="show"
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           variants={fadeUp}
           className="max-w-3xl mb-16"
         >
@@ -184,7 +184,7 @@ function ActivitiesGrid() {
               key={a.title}
               initial="hidden"
               whileInView="show"
-              viewport={{ once: false, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.2 }}
               variants={fadeUp}
               custom={i}
               whileHover={{ y: -6 }}
@@ -248,7 +248,7 @@ function JoinCTA() {
       <motion.div
         initial="hidden"
         whileInView="show"
-        viewport={{ once: false, amount: 0.2 }}
+        viewport={{ once: true, amount: 0.2 }}
         variants={fadeUp}
         className="max-w-5xl mx-auto rounded-[2rem] gradient-warm border border-border p-10 md:p-16 text-center shadow-card"
       >

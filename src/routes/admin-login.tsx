@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { Eye, EyeOff, KeyRound, Lock, Mail, RefreshCw, UserRound } from "lucide-react";
@@ -35,6 +35,21 @@ function AdminLoginPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ kind: "err" | "ok"; text: string } | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!mounted || !data.session) return;
+      try {
+        const status = await checkAdmin();
+        if (mounted && status.isAdmin) navigate({ to: "/admin" });
+      } catch {
+        /* stay on the login form */
+      }
+    })();
+    return () => { mounted = false; };
+  }, [checkAdmin, navigate]);
 
   async function resendVerification() {
     if (!username || !adminEmail) {
@@ -97,7 +112,7 @@ function AdminLoginPage() {
           {mode === "signin" && "Sign in with your username and password."}
           {mode === "signup" && "Create an admin username and verify the authorised admin email."}
           {mode === "reset" && "Verify your username and authorised admin email, then choose a new password."}
-          {mode === "verify-sent" && "We sent a verification link to the authorised admin email. Verify it, then return here to sign in."}
+          {mode === "verify-sent" && "We sent a verification code to the authorised admin email. Verify it, then return here to sign in."}
         </p>
 
         {mode === "verify-sent" ? (
@@ -142,7 +157,7 @@ function AdminLoginPage() {
                 <span className="text-xs font-semibold text-muted-foreground">Admin Email</span>
                 <div className="mt-1 relative">
                   <Mail className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input type="email" required value={adminEmail} onChange={(e) => { setAdminEmail(e.target.value); setMsg(null); }} className="w-full rounded-md border border-input bg-background pl-9 pr-3 py-2 text-sm" placeholder="authorised admin email" />
+                  <input type="email" required value={adminEmail} onChange={(e) => { setAdminEmail(e.target.value); setMsg(null); }} className="w-full rounded-md border border-input bg-background pl-9 pr-3 py-2 text-sm" placeholder="authorised admin email" autoComplete="email" />
                 </div>
               </label>
             )}
