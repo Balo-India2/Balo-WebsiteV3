@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronDown, HelpCircle } from "lucide-react";
 import { PageHero, Section, Reveal } from "@/components/page-kit";
@@ -35,7 +35,7 @@ const GROUPS: { group: string; items: Qa[] }[] = [
     items: [
       {
         q: "When does admission open, and which classes can my child join?",
-        a: "Admissions for the new session are taken from January onwards, and seats in the middle classes open up through the year as families move. We admit from the pre-primary level up to Class 12. Walk in to the school office at 55, Madar Talla Lane, Salkia with your child's birth certificate and the last report card, and we will tell you the same day whether a seat is available in that class.",
+        a: "Admissions for the new session are taken from January onwards, and seats in the middle classes open up through the year as families move. We admit from the pre-primary level up to Class 12. Walk in to the school office at 55, Madar Talla Lane, Babudanga, Pilkhana, Salkia, Howrah with your child's birth certificate and the last report card, and we will tell you the same day whether a seat is available in that class.",
       },
       {
         q: "Is there an entrance test?",
@@ -162,18 +162,18 @@ function FaqPage() {
               Ask BALO AI in Assistant mode, or send us an enquiry and a member of staff will reply.
             </p>
             <div className="mt-5 flex flex-wrap justify-center gap-3">
-              <a
-                href="/balo-ai"
+              <Link
+                to="/balo-ai"
                 className="rounded-full border border-primary/40 bg-primary/10 px-5 py-2.5 text-sm font-semibold text-primary"
               >
                 Ask BALO AI
-              </a>
-              <a
-                href="/enquiry"
+              </Link>
+              <Link
+                to="/enquiry"
                 className="rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground"
               >
                 Send an enquiry
-              </a>
+              </Link>
             </div>
           </div>
         </Reveal>

@@ -108,6 +108,23 @@ function CalendarPage() {
         image={calendarBackground}
       />
 
+      <Section eyebrow="The school year" title="How the year is organised">
+        <div className="grid gap-4 md:grid-cols-3">
+          {[
+            { t: "School day", d: "Eight periods of about forty minutes, roughly 10:00 AM to 3:40 PM, with a mid-morning break. Primary and senior sections may finish a little differently in summer and winter." },
+            { t: "Three terms", d: "The year runs in three academic terms, each with class work, homework, dictations and unit tests. Exact start and end dates are posted on the notice board at the gate." },
+            { t: "Holidays", d: "National holidays, vacations and movable days are confirmed each year on the notice board and in Notices & Events. Plan travel inside the official vacation dates." },
+          ].map((card, i) => (
+            <Reveal key={card.t} i={i}>
+              <article className="h-full rounded-3xl border border-border bg-card p-5 shadow-soft">
+                <h3 className="font-display text-lg font-bold">{card.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{card.d}</p>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
       {months.map((m, mi) => (
         <Section key={m.month} title={m.month} muted={mi % 2 === 1}>
           <div className="grid gap-4 md:grid-cols-2">

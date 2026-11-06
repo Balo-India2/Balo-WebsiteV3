@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "@/lib/limited-motion";
+import { useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Calendar, MapPin, ArrowRight, Sparkles, X, Bell, BellRing } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -206,7 +207,8 @@ function EventsPage() {
   const [selected, setSelected] = useState<EventPost | null>(null);
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
 
   useEffect(() => {
     if (!selected) return;
@@ -216,24 +218,26 @@ function EventsPage() {
   }, [selected]);
 
   return (
-    <main className="pt-24">
-      <section ref={heroRef} className="relative py-20 px-6 overflow-hidden text-white">
-        <motion.video style={{ scale: heroScale }}
-          src="/video/events-banner.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 size-full object-cover origin-center"
-          aria-hidden
-        />
-        <img
-          src={trophiesBg}
-          alt=""
-          aria-hidden
-          className="absolute inset-0 size-full object-cover opacity-0"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/75 to-accent/80" />
+    <main>
+      <section ref={heroRef} className="relative overflow-hidden px-6 py-20 pt-24 text-white">
+        <motion.div style={{ y, scale: heroScale }} className="absolute inset-0 -z-10 will-change-transform">
+          <video
+            src="/video/events-banner.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="size-full object-cover"
+            aria-hidden
+          />
+          <img
+            src={trophiesBg}
+            alt=""
+            aria-hidden
+            className="absolute inset-0 size-full object-cover opacity-0"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/75 to-accent/80" />
+        </motion.div>
         <div className="relative max-w-7xl mx-auto">
           <motion.div initial="hidden" animate="show" variants={fadeUp}>
             <div className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur px-4 py-1.5 text-xs font-semibold mb-6">
@@ -258,7 +262,7 @@ function EventsPage() {
               key={p.title}
               initial="hidden"
               whileInView="show"
-              viewport={{ once: false, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.2 }}
               variants={fadeUp}
               custom={i}
               whileHover={{ y: -8, scale: 1.02 }}
@@ -298,7 +302,7 @@ function EventsPage() {
 
       <section className="py-20 px-6 bg-card">
         <motion.div
-          initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.2 }} variants={fadeUp}
+          initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={fadeUp}
           className="max-w-3xl mx-auto text-center"
         >
           <MapPin className="size-8 mx-auto text-accent mb-4" />

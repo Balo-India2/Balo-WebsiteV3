@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { BaloAiMark } from "@/components/BaloAiMark";
+import { BaloAiWordmark } from "@/components/BaloAiWordmark";
 
 /**
  * Floating BALO AI launcher. Clicking it opens the dedicated /balo-ai page.
@@ -16,9 +17,7 @@ export function BaloAIButton() {
       className="group fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full border border-border bg-card/95 py-2 pl-2 pr-4 shadow-xl backdrop-blur transition hover:scale-[1.03] hover:border-primary/50"
     >
       <BaloAiMark className="size-10" glow />
-      <span className="text-sm font-semibold">
-        BALO <span className="text-primary">AI</span>
-      </span>
+      <BaloAiWordmark size="sm" />
     </Link>
   );
 }

@@ -33,7 +33,7 @@ export function LoadingScreen() {
                 className="absolute inset-0 rounded-full border-2 border-accent"
                 initial={{ scale: 0.6, opacity: 0.8 }}
                 animate={{ scale: 2.4, opacity: 0 }}
-                transition={{ duration: 1.6, repeat: Infinity, delay: i * 0.4, ease: "easeOut" }}
+                transition={{ duration: 1.6, repeat: 3, delay: i * 0.4, ease: "easeOut" }}
               />
             ))}
             <motion.div

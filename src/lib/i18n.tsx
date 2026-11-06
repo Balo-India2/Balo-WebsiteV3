@@ -22,6 +22,8 @@ const dict: Record<string, Record<Lang, string>> = {
   "nav.contact":        { en: "Contact", hi: "संपर्क", bn: "যোগাযোগ" },
   "nav.faq":            { en: "FAQ", hi: "सामान्य प्रश्न", bn: "সাধারণ প্রশ্ন" },
   "nav.donate":         { en: "Donate", hi: "दान करें", bn: "দান করুন" },
+  "nav.admin":          { en: "Admin", hi: "एडमिन", bn: "অ্যাডমিন" },
+  "nav.adminLogin":     { en: "Admin login", hi: "एडमिन लॉगिन", bn: "অ্যাডমিন লগইন" },
   "navgroup.school":    { en: "School", hi: "स्कूल", bn: "স্কুল" },
   "navgroup.about":     { en: "About Us", hi: "हमारे बारे में", bn: "আমাদের সম্পর্কে" },
   "navgroup.academics": { en: "Academics", hi: "शिक्षा", bn: "শিক্ষা" },
@@ -45,6 +47,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       if (saved === "en" || saved === "hi" || saved === "bn") setLangState(saved);
     } catch {}
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   const setLang = (l: Lang) => {
     setLangState(l);

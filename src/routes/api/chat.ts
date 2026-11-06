@@ -6,6 +6,7 @@ import {
   type ContextSection,
 } from "@/lib/balo-assistant.server";
 import { generateStudentAnswer, type StudentTurn } from "@/lib/balo-student.server";
+import { prepareChatHistory } from "@/lib/balo-history.server";
 
 type Mode = "assistant" | "student";
 
@@ -13,6 +14,7 @@ type Body = {
   mode?: Mode;
   sessionKey?: string;
   message?: string;
+  history?: { role?: string; content?: string }[];
   imageDataUrl?: string | null;
   classLabel?: string | null;
   subject?: string | null;
@@ -40,13 +42,26 @@ function clean(v: unknown, max: number) {
   return typeof v === "string" ? v.trim().slice(0, max) : "";
 }
 
+function parseClientHistory(raw: unknown): StudentTurn[] {
+  if (!Array.isArray(raw)) return [];
+  const out: StudentTurn[] = [];
+  for (const item of raw.slice(-MAX_HISTORY)) {
+    if (!item || typeof item !== "object") continue;
+    const role = (item as { role?: string }).role;
+    const content = clean((item as { content?: string }).content, 4000);
+    if ((role === "user" || role === "assistant") && content) {
+      out.push({ role, content });
+    }
+  }
+  return out;
+}
+
 export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         const body = (await request.json()) as Body;
         const mode: Mode = body.mode === "student" ? "student" : "assistant";
-        const sessionKey = clean(body.sessionKey, 80);
         const message = clean(body.message, 4000);
         // Image questions are a Student-mode feature only.
         const image =
@@ -56,7 +71,6 @@ export const Route = createFileRoute("/api/chat")({
         const subject = clean(body.subject, 80);
         const topic = clean(body.topic, 200);
 
-        if (!sessionKey) return errorJson("Missing session", 400);
         if (!message && !image) return errorJson("Message required", 400);
         if (image && !image.startsWith("data:image/")) {
           return errorJson("Unsupported image", 400);
@@ -145,42 +159,8 @@ export const Route = createFileRoute("/api/chat")({
           }
         }
 
-        // ---- Conversation bookkeeping (shared by both modes) -------------
-        let conversationId: string | null = null;
-        const { data: existingConv } = await supabaseAdmin
-          .from("ai_conversations")
-          .select("id")
-          .eq("session_key", sessionKey)
-          .eq("mode", mode)
-          .maybeSingle();
-
-        if (existingConv) {
-          conversationId = existingConv.id;
-        } else {
-          const { data: created, error: convErr } = await supabaseAdmin
-            .from("ai_conversations")
-            .insert({ session_key: sessionKey, mode })
-            .select("id")
-            .single();
-          if (convErr) console.error("[balo-ai] conversation insert failed", convErr);
-          conversationId = created?.id ?? null;
-        }
-
-        const history: StudentTurn[] = [];
-        if (conversationId) {
-          const { data: rows } = await supabaseAdmin
-            .from("ai_messages")
-            .select("role, content")
-            .eq("conversation_id", conversationId)
-            .order("created_at", { ascending: false })
-            .limit(MAX_HISTORY);
-
-          for (const r of (rows ?? []).reverse()) {
-            if (r.role === "user" || r.role === "assistant") {
-              history.push({ role: r.role, content: r.content });
-            }
-          }
-        }
+        // History lives only in this browser tab. Nothing is written to the database.
+        const history = parseClientHistory(body.history);
 
         const json = (payload: Record<string, unknown>, status = 200) =>
           new Response(JSON.stringify(payload), {
@@ -188,53 +168,33 @@ export const Route = createFileRoute("/api/chat")({
             headers: {
               "Content-Type": "application/json; charset=utf-8",
               "Cache-Control": "no-store",
-              "X-Balo-Conversation": conversationId ?? "",
             },
           });
 
-        const persist = async (answer: string, meta: Record<string, string | number | null>) => {
-          if (!conversationId) return;
-          const { error: insErr } = await supabaseAdmin.from("ai_messages").insert([
-            {
-              conversation_id: conversationId,
-              mode,
-              role: "user",
-              content: message || "(image only)",
-              image_url: image ? "inline-upload" : null,
-              sources: meta as never,
-            },
-            { conversation_id: conversationId, mode, role: "assistant", content: answer },
-          ]);
-          if (insErr) console.error("[balo-ai] message insert failed", insErr);
-          await supabaseAdmin
-            .from("ai_conversations")
-            .update({ updated_at: new Date().toISOString() })
-            .eq("id", conversationId);
-        };
-
-        // ASSISTANT MODE — its own backend keys, models and verified school context.
+        // ASSISTANT MODE — Gemini with verified school context.
         if (mode === "assistant") {
           const sections: ContextSection[] = [...dbSections, ...splitSiteFacts(SITE_FACTS)];
           const { used } = composeAssistantAnswer(message, sections);
           const assistantKeys = secretList("BALO_ASSISTANT_API_KEY", "BALO_ASSISTANT_API_KEY_BACKUP");
-          if (!assistantKeys.length) return errorJson("The school assistant is not configured yet. Please inform the school office.", 500);
+          if (!assistantKeys.length) {
+            return errorJson("The school assistant is not configured yet. Please inform the school office.", 500);
+          }
 
           const providerRule = asksAboutProvider(message)
             ? 'The CURRENT question asks who powers you. Answer clearly: "No, I am BALO AI, powered by Google." Do not name a model unless specifically asked which model.'
             : "The CURRENT question does not ask about your provider. Never mention Google, Gemini, a model, a provider, an API, or earlier provider-related conversation.";
           const context = used.map((s) => `[${s.title}]\n${s.body}`).join("\n\n---\n\n").slice(0, 40000);
-          const system = `${settings?.system_instructions?.trim() || ASSISTANT_IDENTITY_RULES}\n\n${ASSISTANT_IDENTITY_RULES}\n\n${providerRule}\n\nAnswer only from this verified school context:\n${context}`;
+          const system = `${settings?.system_instructions?.trim() || ASSISTANT_IDENTITY_RULES}\n\n${ASSISTANT_IDENTITY_RULES}\n\n${providerRule}\n\nAnswer ONLY the latest user message. Do not repeat or recap earlier answers. If this is a new topic, ignore earlier topics.\n\nFormatting: never reply as a bland wall of plain text. Use markdown with a clear visual hierarchy:\n- Start with a short ## heading that names the topic.\n- Use ### subheadings when you cover more than one point.\n- **Bold** names, places, numbers and key facts.\n- Use bullet lists or numbered steps whenever there are two or more items.\n- Short paragraphs. Leave a blank line between sections.\n\nAnswer only from this verified school context:\n${context}`;
           try {
             const result = await generateStudentAnswer({
               system,
-              history,
+              history: prepareChatHistory(history, message),
               message,
               imageDataUrl: null,
               model: settings?.model ?? null,
               fallbackModels: settings?.fallback_models ?? null,
               apiKeys: assistantKeys,
             });
-            await persist(result.answer, { engine: "balo-assistant", model: result.model, passages: used.length });
             return json({ answer: result.answer, engine: "balo-assistant" });
           } catch (error) {
             console.error("[balo-ai] assistant backend failed", error);
@@ -294,7 +254,7 @@ Rules you must never break:
         try {
           const { answer, model, attempts } = await generateStudentAnswer({
             system,
-            history,
+            history: prepareChatHistory(history, message),
             message,
             imageDataUrl: image,
             model: settings?.model ?? null,
@@ -306,11 +266,7 @@ Rules you must never break:
             console.warn("[balo-ai] student model fallbacks used", { attempts, served: model });
           }
 
-        persist(answer, { engine: "gemini", model, classLabel, subject, topic }).catch((err) => {
-          console.error("[balo-ai] background persist failed", err);
-        });
-
-        return json({ answer, engine: "gemini", model });
+          return json({ answer, engine: "gemini", model });
         } catch (error: any) {
           const status: number | undefined = error?.status ?? error?.statusCode;
           const msg = String(error?.message ?? error ?? "");

@@ -1,22 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { getConversation, clearConversation } from "@/lib/ai.functions";
 
 export type Mode = "assistant" | "student";
 export type Msg = { role: "user" | "assistant"; content: string; image?: string | null };
-
-const SESSION_KEY_STORAGE = "balo.ai.session";
-
-export function getSessionKey() {
-  if (typeof window === "undefined") return "";
-  let k = localStorage.getItem(SESSION_KEY_STORAGE);
-  if (!k) {
-    k = `s_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
-    localStorage.setItem(SESSION_KEY_STORAGE, k);
-  }
-  return k;
-}
 
 export const STARTERS: Record<Mode, string[]> = {
   assistant: [
@@ -29,21 +15,20 @@ export const STARTERS: Record<Mode, string[]> = {
     "Explain photosynthesis simply",
     "Solve: 2x + 5 = 17, step by step",
     "Help me revise the water cycle",
-    "Give me 5 practice sums on fractions",
+    "Help me understand calculus",
   ],
 };
 
 type ClassRow = { id: string; name: string };
 type SubjectRow = { name: string; class_id: string | null };
 
-export function useBaloChat(active: boolean) {
+export function useBaloChat(_active = true) {
   const [mode, setMode] = useState<Mode>("assistant");
   const [input, setInput] = useState("");
   const [image, setImage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [msgs, setMsgs] = useState<Record<Mode, Msg[]>>({ assistant: [], student: [] });
-  const [loadedModes, setLoadedModes] = useState<Record<Mode, boolean>>({ assistant: false, student: false });
   const [enabled, setEnabled] = useState<Record<Mode, boolean>>({ assistant: true, student: true });
   const [classRows, setClassRows] = useState<ClassRow[]>([]);
   const [subjectRows, setSubjectRows] = useState<SubjectRow[]>([]);
@@ -51,12 +36,17 @@ export function useBaloChat(active: boolean) {
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
 
-  const sessionKey = useMemo(() => getSessionKey(), []);
-  const loadConv = useServerFn(getConversation);
-  const clearConv = useServerFn(clearConversation);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-
   const current = msgs[mode];
+
+  // Forget any key from older builds that restored chats after reopen.
+  useEffect(() => {
+    try {
+      localStorage.removeItem("balo.ai.session");
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   useEffect(() => {
     let alive = true;
@@ -78,7 +68,6 @@ export function useBaloChat(active: boolean) {
     return () => { alive = false; };
   }, []);
 
-  // Subjects available for the picked class (falls back to all when no class picked)
   const selectedClassId = classRows.find((c) => c.name === classLabel)?.id ?? null;
   const subjects = useMemo(() => {
     const rows = selectedClassId
@@ -87,21 +76,9 @@ export function useBaloChat(active: boolean) {
     return Array.from(new Set(rows.map((r) => r.name)));
   }, [selectedClassId, subjectRows]);
 
-  // Keep the subject valid for the chosen class
   useEffect(() => {
     if (subject && !subjects.includes(subject)) setSubject("");
   }, [subjects, subject]);
-
-  useEffect(() => {
-    if (!active || loadedModes[mode] || !sessionKey) return;
-    setLoadedModes((p) => ({ ...p, [mode]: true }));
-    loadConv({ data: { sessionKey, mode } })
-      .then((r) => {
-        const restored = (r.messages as Msg[]).filter((m) => m.role === "user" || m.role === "assistant");
-        if (restored.length) setMsgs((p) => ({ ...p, [mode]: restored }));
-      })
-      .catch(() => {});
-  }, [active, mode, sessionKey, loadedModes, loadConv]);
 
   const pickImage = useCallback((file: File | undefined | null) => {
     if (!file) return;
@@ -119,6 +96,12 @@ export function useBaloChat(active: boolean) {
       if ((!question && !sentImage) || busy) return;
       setError(null);
       setBusy(true);
+
+      const prior = msgs[mode]
+        .filter((m) => m.content && (m.role === "user" || m.role === "assistant"))
+        .slice(-10)
+        .map((m) => ({ role: m.role, content: m.content }));
+
       const outgoing: Msg = { role: "user", content: question || "(image)", image: sentImage };
       setMsgs((p) => ({ ...p, [mode]: [...p[mode], outgoing, { role: "assistant", content: "" }] }));
       setInput("");
@@ -130,8 +113,8 @@ export function useBaloChat(active: boolean) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             mode,
-            sessionKey,
             message: question,
+            history: prior,
             imageDataUrl: sentImage,
             classLabel: mode === "student" ? classLabel : null,
             subject: mode === "student" ? subject : null,
@@ -139,13 +122,11 @@ export function useBaloChat(active: boolean) {
           }),
         });
 
-        // The endpoint always answers with JSON: { answer } or { error }.
         const raw = await res.text();
         let payload: {
           answer?: string;
           error?: string;
           engine?: string;
-          context?: { title: string; body: string }[];
         } = {};
         try {
           payload = raw ? JSON.parse(raw) : {};
@@ -157,24 +138,9 @@ export function useBaloChat(active: boolean) {
           throw new Error(payload.error || "BALO AI could not answer that. Please try again.");
         }
 
-        let answer = (payload.answer ?? "").trim();
+        const answer = (payload.answer ?? "").trim();
         if (!answer) {
           throw new Error(payload.error || "BALO AI could not answer that. Please try again.");
-        }
-
-        // Assistant mode: if this browser has its own built-in on-device AI,
-        // let it reword the school's verified passages locally for a more
-        // conversational reply. Falls back silently to the server answer.
-        if (mode === "assistant" && payload.context?.length) {
-          try {
-            const { onDeviceAiAvailable, rewriteWithOnDeviceAi } = await import("@/lib/on-device-ai");
-            if (await onDeviceAiAvailable()) {
-              const local = await rewriteWithOnDeviceAi(question, payload.context);
-              if (local) answer = local;
-            }
-          } catch {
-            /* keep the server answer */
-          }
         }
 
         setMsgs((p) => {
@@ -182,9 +148,7 @@ export function useBaloChat(active: boolean) {
           list[list.length - 1] = { role: "assistant", content: answer };
           return { ...p, [mode]: list };
         });
-
       } catch (e: any) {
-
         setError(e?.message ?? "Something went wrong.");
         setMsgs((p) => {
           const list = [...p[mode]];
@@ -195,14 +159,13 @@ export function useBaloChat(active: boolean) {
         setBusy(false);
       }
     },
-    [busy, classLabel, image, mode, sessionKey, subject, topic],
+    [busy, classLabel, image, msgs, mode, subject, topic],
   );
 
-  const reset = useCallback(async () => {
+  const reset = useCallback(() => {
     setMsgs((p) => ({ ...p, [mode]: [] }));
     setError(null);
-    try { await clearConv({ data: { sessionKey, mode } }); } catch {}
-  }, [clearConv, mode, sessionKey]);
+  }, [mode]);
 
   return {
     mode, setMode,

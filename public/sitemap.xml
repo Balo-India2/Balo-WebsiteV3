@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://baloindia.org/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://baloindia.org/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://baloindia.org/life-at-balo</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://baloindia.org/about</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://baloindia.org/staff</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://baloindia.org/volunteers</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://baloindia.org/developers</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://baloindia.org/welfare-society</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://baloindia.org/facilities</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://baloindia.org/subjects</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://baloindia.org/extracurricular</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://baloindia.org/events</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://baloindia.org/developers</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://baloindia.org/events</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://baloindia.org/gallery</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://baloindia.org/virtual-tour</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://baloindia.org/rules</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://baloindia.org/calendar</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://baloindia.org/enquiry</loc><changefreq>yearly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://baloindia.org/faq</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://baloindia.org/balo-ai</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
 </urlset>

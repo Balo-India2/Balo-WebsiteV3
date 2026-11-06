@@ -52,7 +52,7 @@ export const Route = createFileRoute("/life-at-balo")({
       {
         name: "description",
         content:
-          "A day at Balo English Medium School: morning assembly and prayer, classes, breaktime, music and dance, practicals, weekly reflection and a hot lunch — plus awareness programmes and school activities.",
+          "A day at Balo English Medium School: morning assembly and prayer, classes, breaktime, music and dance, practicals, weekly reflection and a hot lunch — plus Nurturing Hope, our programme for nutrition, cleanliness and overall development beside studies.",
       },
       { property: "og:title", content: "Life at BALO — A day in our school" },
       {
@@ -106,7 +106,7 @@ const dayFlow: Block[] = [
   },
 ];
 
-const awareness: Block[] = [
+const nurturingHope: Block[] = [
   {
     title: "Nutrition",
     desc: "Sessions on healthy eating and balanced meals, including regular distribution of fruit such as bananas so students see healthy food as normal, not special.",
@@ -191,7 +191,7 @@ function LifeAtBaloPage() {
         eyebrow="Life at BALO"
         title="One school day, from prayer to"
         highlight="lunch."
-        lead="This is what a day at Balo English Medium School actually looks like — and the awareness programmes, rallies and celebrations that fill the rest of our year."
+        lead="This is what a day at Balo English Medium School actually looks like — and Nurturing Hope, the rallies and the celebrations that fill the rest of our year."
         image={baloBackground}
       />
 
@@ -218,15 +218,18 @@ function LifeAtBaloPage() {
         </Reveal>
       </Section>
 
-      <Section title="Awareness Programmes" eyebrow="Health, hygiene & habits" muted>
+      <Section title="Nurturing Hope" eyebrow="Beside studies" muted>
         <Reveal>
           <p className="mb-8 max-w-3xl leading-relaxed text-muted-foreground">
-            The school regularly organises awareness programmes and seminars for both students and
-            parents, because habits learned at school only last when they are practised at home too.
+            BALO started <strong className="text-foreground">Nurturing Hope</strong> — a programme
+            for nutrition, cleanliness and overall development, beside studies. It is how we care
+            for the whole child: healthy food, clean habits, and the confidence to grow at home as
+            well as in class. Students and parents learn together, because habits last only when
+            they are practised in both places.
           </p>
         </Reveal>
         <div className="space-y-12">
-          {awareness.map((b, i) => (
+          {nurturingHope.map((b, i) => (
             <BlockRow key={b.title} b={b} index={i} onOpen={lightbox.open} />
           ))}
         </div>

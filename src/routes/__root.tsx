@@ -131,7 +131,7 @@ function HashScroller() {
         requestAnimationFrame(() => {
           const el = document.getElementById(id);
           if (!el) return;
-          const top = el.getBoundingClientRect().top + window.scrollY - 80;
+          const top = el.getBoundingClientRect().top + window.scrollY - 130;
           window.scrollTo({ top, behavior: "smooth" });
         });
       });
@@ -176,7 +176,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <LoadingScreen />
-        {!isAdminShellRoute && <Nav />}
+        {!isAdminShellRoute && !isChatRoute && <Nav />}
         {!isBare && !isAdminLogin && <AnnouncementBanner />}
         <HashScroller />
         <div className={isBare ? "" : isAdminLogin ? "pt-[72px]" : "pt-9"}>

@@ -1,5 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { createFileRoute } from "@tanstack/react-router";
+import { motion } from "@/lib/limited-motion";
+import { useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import {
   BookOpen, Heart, Users, Award, Lightbulb, Quote, ArrowRight,
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/about")({
       { title: "Leadership — Balo English Medium School, Howrah" },
       { name: "description", content: "Meet the founder, director and principal guiding Balo English Medium School in Howrah." },
       { property: "og:title", content: "Leadership — Balo English Medium School" },
-      { property: "og:description", content: "Meet the hearts behind Balo English Medium School: founder Mrs Elizabetta Ravoili, director Mrs Rehana Khatoon, and principal Mrs Roshan Ara." },
+      { property: "og:description", content: "Meet the hearts behind Balo English Medium School: founder Mrs Elisabetta Ravaioli, director Mrs Rehana Khatoon, and principal Mrs Roshan Ara." },
     ],
     links: [{ rel: "canonical", href: "/about" }],
   }),
@@ -35,11 +36,11 @@ const fadeUp = {
 
 const leaders = [
   {
-    name: "Elizabetta, Liam and Anna ",
-    role: "Founders",
+    name: "Elisabetta Ravaioli",
+    role: "Founder",
     image: founder,
     quote: "One classroom can lift an entire lane out of poverty.",
-    bio: "A lifelong educator with a heart for the underserved, Mrs Ravoili founded Balo English Medium School to make sure no child in Babudanga or Pilkhana was turned away for lack of money. She believes that dignity begins with a good teacher and a welcoming classroom.",
+    bio: "A lifelong educator with a heart for the underserved, Mrs Ravaioli founded Balo English Medium School to make sure no child in Babudanga or Pilkhana was turned away for lack of money. She believes that dignity begins with a good teacher and a welcoming classroom.",
   },
   {
     name: "Mrs Rehana Khatoon",
@@ -60,12 +61,12 @@ const leaders = [
 function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
 
   return (
     <section ref={ref} className="relative min-h-[70vh] flex items-center overflow-hidden pt-24">
-      <motion.div style={{ y, scale }} className="absolute inset-0 -z-10">
+      <motion.div style={{ y, scale }} className="absolute inset-0 -z-10 will-change-transform">
         <img
           src={hero}
           alt="Students at Balo English Medium School"
@@ -99,7 +100,7 @@ function Leadership() {
         <motion.div
           initial="hidden"
           whileInView="show"
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           variants={fadeUp}
           className="text-center max-w-3xl mx-auto mb-16"
         >
@@ -120,7 +121,7 @@ function Leadership() {
               key={leader.name}
               initial="hidden"
               whileInView="show"
-              viewport={{ once: false, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.2 }}
               variants={fadeUp}
               custom={i}
               whileHover={{ y: -8 }}
@@ -133,7 +134,7 @@ function Leadership() {
                   width={1024}
                   height={1024}
                   loading="lazy"
-                  className="size-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="size-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
               <div className="p-6">
@@ -168,7 +169,7 @@ function Mission() {
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.8 }}
         >
           <img
@@ -183,7 +184,7 @@ function Mission() {
         <motion.div
           initial="hidden"
           whileInView="show"
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           variants={fadeUp}
         >
           <div className="text-xs uppercase tracking-[0.2em] text-accent font-bold mb-4">
@@ -201,7 +202,7 @@ function Mission() {
                 key={v.title}
                 initial={{ opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.5, delay: i * 0.06 }}
                 whileHover={{ scale: 1.05, y: -4 }}
                 className="flex gap-3 p-4 rounded-2xl bg-background border border-border cursor-default shadow-soft"
@@ -231,14 +232,14 @@ function ImpactQuote() {
         <motion.div
           initial="hidden"
           whileInView="show"
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
           variants={fadeUp}
         >
           <Quote className="size-12 mx-auto opacity-60" />
           <p className="mt-6 text-2xl md:text-4xl font-display font-medium text-balance leading-snug">
             "We did not wait for a big building. We started with a big heart — and the building grew around it."
           </p>
-          <div className="mt-8 text-sm tracking-widest uppercase text-white/80">— Mrs Elizabetta Ravoili, Founder</div>
+          <div className="mt-8 text-sm tracking-widest uppercase text-white/80">— Mrs Elisabetta Ravaioli, Founder</div>
         </motion.div>
       </div>
     </section>

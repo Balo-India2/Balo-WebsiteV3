@@ -56,10 +56,11 @@ export function PageHero({
   const bg = image;
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
   return (
     <section ref={heroRef} className="relative flex min-h-[70vh] items-center overflow-hidden px-6 pt-24">
-      <motion.div aria-hidden style={{ scale }} className="pointer-events-none absolute inset-0 -z-10 origin-center">
+      <motion.div aria-hidden style={{ y, scale }} className="pointer-events-none absolute inset-0 -z-10 origin-center will-change-transform">
         {bg && (
           <img
             src={bg}

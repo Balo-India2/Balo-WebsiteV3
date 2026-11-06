@@ -4,11 +4,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
-  Send, ImagePlus, GraduationCap, MessagesSquare, RotateCcw, Loader2, Sparkles, X,
+  Send,
+  ImagePlus,
+  GraduationCap,
+  MessagesSquare,
+  RotateCcw,
+  ArrowLeft,
+  X,
 } from "lucide-react";
 import { BaloAiMark } from "@/components/BaloAiMark";
-import baloAiAnimation from "@/assets/balo-ai-animation.mp4";
-
+import { BaloAiWordmark } from "@/components/BaloAiWordmark";
 import { useBaloChat, STARTERS, type Mode, type Msg } from "@/lib/use-balo-chat";
 
 export const Route = createFileRoute("/balo-ai")({
@@ -33,63 +38,70 @@ export const Route = createFileRoute("/balo-ai")({
   component: BaloAiPage,
 });
 
-/**
- * Intro animation shown when the BALO AI page opens: the uploaded BALO AI
- * animation video plays once, then fades into the static logo.
- */
-function IntroAnimation({ onDone }: { onDone: () => void }) {
-  useEffect(() => {
-    const timer = window.setTimeout(onDone, 2200);
-    return () => window.clearTimeout(timer);
-  }, [onDone]);
+const ease = [0.22, 1, 0.36, 1] as const;
 
+function ModeSwitch({
+  mode,
+  onChange,
+}: {
+  mode: Mode;
+  onChange: (mode: Mode) => void;
+}) {
   return (
-    <motion.div
-      className="fixed inset-0 z-[60] grid place-items-center bg-background"
-      initial={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="flex flex-col items-center">
-        <video
-          src={baloAiAnimation}
-          autoPlay
-          muted
-          playsInline
-          preload="auto"
-          onLoadedMetadata={(event) => {
-            event.currentTarget.playbackRate = 1.5;
-          }}
-          onEnded={onDone}
-          onError={onDone}
-          className="w-56 max-w-[70vw] rounded-3xl sm:w-72"
-        />
-      </div>
-    </motion.div>
-  );
-}
-
-function AnimatedLogo() {
-  return (
-    <div className="relative grid place-items-center">
-      <motion.span
-        aria-hidden
-        className="absolute size-24 rounded-full bg-primary/25 blur-2xl"
-        animate={{ opacity: [0.35, 0.65, 0.35] }}
-        transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        initial={{ scale: 0.6, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 140, damping: 14 }}
-        className="relative"
-      >
-        <BaloAiMark className="size-20 drop-shadow-xl sm:size-24" />
-      </motion.div>
+    <div className="relative inline-flex rounded-full bg-muted/70 p-0.5">
+      {(["assistant", "student"] as Mode[]).map((item) => {
+        const active = mode === item;
+        return (
+          <button
+            key={item}
+            type="button"
+            onClick={() => onChange(item)}
+            className={`relative inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors sm:px-3.5 sm:text-sm ${
+              active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {active && (
+              <motion.span
+                layoutId="balo-ai-mode"
+                className="absolute inset-0 rounded-full bg-card shadow-sm ring-1 ring-border/70"
+                transition={{ type: "spring", stiffness: 420, damping: 34 }}
+              />
+            )}
+            <span className="relative inline-flex items-center gap-1.5">
+              {item === "assistant" ? (
+                <MessagesSquare className="hidden size-3.5 sm:block" />
+              ) : (
+                <GraduationCap className="hidden size-3.5 sm:block" />
+              )}
+              {item === "assistant" ? "Assistant" : "Student"}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }
 
+function HeroLogo() {
+  return (
+    <div className="relative grid place-items-center">
+      <motion.span
+        aria-hidden
+        className="absolute size-40 rounded-full bg-secondary/30 blur-3xl sm:size-48"
+        animate={{ opacity: [0.35, 0.7, 0.35], scale: [0.94, 1.06, 0.94] }}
+        transition={{ duration: 4.8, repeat: 3, ease: "easeInOut" }}
+      />
+      <motion.div
+        initial={{ scale: 0.78, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 130, damping: 16 }}
+        className="relative"
+      >
+        <BaloAiMark className="size-24 sm:size-28" alt="BALO AI" />
+      </motion.div>
+    </div>
+  );
+}
 
 function Bubble({ m }: { m: Msg }) {
   const isUser = m.role === "user";
@@ -97,24 +109,22 @@ function Bubble({ m }: { m: Msg }) {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.22, ease: "easeOut" }}
+      transition={{ duration: 0.28, ease }}
       className={`flex gap-2.5 ${isUser ? "justify-end" : "justify-start"}`}
     >
-      {!isUser && (
-        <BaloAiMark className="mt-1 size-7 shrink-0" />
-      )}
+      {!isUser && <BaloAiMark className="mt-0.5 size-7 shrink-0" />}
       <div
-        className={`max-w-[min(46rem,86%)] rounded-3xl px-4 py-3 text-sm sm:text-[0.95rem] leading-relaxed shadow-sm ${
+        className={`max-w-[min(42rem,86%)] px-4 py-3 text-sm leading-relaxed sm:text-[0.95rem] ${
           isUser
-            ? "bg-primary text-primary-foreground rounded-br-md"
-            : "bg-card border border-border rounded-bl-md"
+            ? "rounded-3xl rounded-br-md bg-primary text-primary-foreground"
+            : "rounded-3xl rounded-bl-md bg-card/90 ring-1 ring-border/70"
         }`}
       >
         {m.image && (
           <img
             src={m.image}
             alt="Uploaded question"
-            className="mb-2 max-h-56 w-auto rounded-xl border border-border/40"
+            className="mb-2 max-h-52 w-auto rounded-2xl"
           />
         )}
         {isUser ? (
@@ -129,237 +139,321 @@ function Bubble({ m }: { m: Msg }) {
   );
 }
 
+function Typing() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex items-end gap-2.5"
+    >
+      <BaloAiMark className="size-7 shrink-0" />
+      <div className="flex items-center gap-1 rounded-3xl rounded-bl-md bg-card/90 px-3.5 py-3 ring-1 ring-border/70">
+        {[0, 1, 2].map((i) => (
+          <motion.span
+            key={i}
+            className="size-1.5 rounded-full bg-foreground/45"
+            animate={{ y: [0, -3.5, 0], opacity: [0.35, 1, 0.35] }}
+            transition={{ duration: 0.85, repeat: Infinity, delay: i * 0.14, ease: "easeInOut" }}
+          />
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 function BaloAiPage() {
   const chat = useBaloChat(true);
   const endRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const canUpload = chat.mode === "student";
   const started = chat.messages.length > 0;
-  // Play the BALO AI logo animation each time the page is opened.
-  const [intro, setIntro] = useState(true);
   const [studentPledge, setStudentPledge] = useState(false);
+  const blocked = chat.mode === "student" && !studentPledge;
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end", behavior: "smooth" });
   }, [chat.messages, chat.busy]);
 
+  useEffect(() => {
+    const el = chat.inputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 128)}px`;
+  }, [chat.input, chat.inputRef]);
+
+  const selectClass =
+    "h-9 rounded-full border-0 bg-muted/70 px-3 text-xs font-medium outline-none ring-1 ring-transparent transition focus:bg-card focus:ring-primary/30 sm:text-sm";
+
   return (
     <main className="relative flex h-[100dvh] flex-col overflow-hidden bg-background">
-      <AnimatePresence>
-        {intro && <IntroAnimation key="intro" onDone={() => setIntro(false)} />}
-      </AnimatePresence>
-
-      {/* Ambient background */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-40 left-1/2 size-[38rem] -translate-x-1/2 rounded-full bg-primary/15 blur-3xl" />
-        <div className="absolute top-1/3 -right-32 size-[26rem] rounded-full bg-accent/15 blur-3xl" />
+        <div className="absolute -top-32 left-1/2 size-[28rem] -translate-x-1/2 rounded-full bg-secondary/15 blur-3xl" />
+        <div className="absolute bottom-0 right-0 size-[22rem] rounded-full bg-primary/10 blur-3xl" />
       </div>
 
-      {/* Scrollable area — the composer below stays fixed */}
-      <div
-        ref={scrollRef}
-        className="relative flex-1 overflow-y-auto overscroll-contain px-4 pt-8 sm:px-6"
-      >
-        <div className="mx-auto w-full max-w-4xl pb-6">
-        {/* Hero */}
-        <motion.header
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className={`flex flex-col items-center text-center ${started ? "pb-4" : "pb-8"}`}
-        >
-          <AnimatedLogo />
-          <h1 className="mt-5 font-display text-3xl font-bold sm:text-4xl">
-            BALO <span className="text-primary">AI</span>
-          </h1>
-          <p className="mt-2 max-w-xl text-sm text-muted-foreground sm:text-base">
-            I am BALO AI — the official assistant of BALO English Medium School in{" "}
-            <strong>Assistant</strong> mode, and in <strong>Student</strong> mode I help BALO&apos;s
-            students study from the books and syllabus used at school, understand their textbooks and
-            practise previous year questions across the ICSE curriculum.
-          </p>
+      <header className="relative z-10 shrink-0 border-b border-border/40 bg-background/75 backdrop-blur-md">
+        <div className="mx-auto flex h-14 max-w-3xl items-center gap-2 px-3 sm:h-16 sm:px-5">
+          <Link
+            to="/"
+            aria-label="Back to website"
+            className="grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground"
+          >
+            <ArrowLeft className="size-4" />
+          </Link>
 
-
-          {/* Mode switch */}
-          <div className="mt-6 inline-flex rounded-full border border-border bg-card/80 p-1 shadow-sm backdrop-blur">
-            {(["assistant", "student"] as Mode[]).map((m) => (
-              <button
-                key={m}
-                onClick={() => chat.setMode(m)}
-                className={`relative inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
-                  chat.mode === m
-                    ? "bg-primary text-primary-foreground shadow"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {m === "assistant" ? <MessagesSquare className="size-4" /> : <GraduationCap className="size-4" />}
-                {m === "assistant" ? "Assistant" : "Student"}
-              </button>
-            ))}
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <BaloAiMark className="size-8 shrink-0 sm:size-9" alt="" />
+              <BaloAiWordmark size="sm" />
+            </div>
+            <div className="mt-0.5 hidden pl-10 text-[10px] uppercase tracking-[0.18em] text-muted-foreground sm:block sm:pl-11">
+              Balo English Medium School
+            </div>
           </div>
 
-          {chat.mode === "student" && (
-            <div className="mt-4 w-full max-w-2xl">
-              <div className="grid gap-2 sm:grid-cols-3">
+          <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
+            <ModeSwitch mode={chat.mode} onChange={chat.setMode} />
+            {started && (
+              <button
+                type="button"
+                onClick={chat.reset}
+                title="New conversation"
+                aria-label="New conversation"
+                className="grid size-9 place-items-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              >
+                <RotateCcw className="size-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+      </header>
+
+      <AnimatePresence initial={false}>
+        {chat.mode === "student" && (
+          <motion.div
+            key="student-bar"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.28, ease }}
+            className="relative z-10 shrink-0 overflow-hidden border-b border-border/40 bg-background/60"
+          >
+            <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-2 px-3 py-2.5 sm:px-5">
               <select
                 value={chat.classLabel}
                 onChange={(e) => chat.setClassLabel(e.target.value)}
-                className="rounded-xl border border-input bg-card px-3 py-2 text-sm"
+                className={selectClass}
               >
-                <option value="">Choose class…</option>
-                {chat.classes.map((c) => <option key={c} value={c}>{c}</option>)}
+                <option value="">Class</option>
+                {chat.classes.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
               </select>
               <select
                 value={chat.subject}
                 onChange={(e) => chat.setSubject(e.target.value)}
-                className="rounded-xl border border-input bg-card px-3 py-2 text-sm"
+                className={selectClass}
               >
-                <option value="">Choose subject…</option>
-                {chat.subjects.map((s) => <option key={s} value={s}>{s}</option>)}
+                <option value="">Subject</option>
+                {chat.subjects.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
               </select>
               <input
                 value={chat.topic}
                 onChange={(e) => chat.setTopic(e.target.value)}
-                placeholder="Topic / chapter (optional)"
-                className="rounded-xl border border-input bg-card px-3 py-2 text-sm"
+                placeholder="Topic (optional)"
+                className={`${selectClass} min-w-[8rem] flex-1`}
               />
-              </div>
-              <label className="mt-3 flex cursor-pointer items-start gap-2 rounded-xl border border-border bg-card/80 p-3 text-left text-xs leading-relaxed text-muted-foreground">
+              <label className="flex min-w-[12rem] flex-1 cursor-pointer items-start gap-2 text-[11px] leading-snug text-muted-foreground sm:text-xs">
                 <input
                   type="checkbox"
                   checked={studentPledge}
                   onChange={(event) => setStudentPledge(event.target.checked)}
-                  className="mt-0.5 size-4 shrink-0 accent-primary"
+                  className="mt-0.5 size-3.5 shrink-0 accent-primary"
                 />
-                <span>I confirm that I will not exploit BALO AI to do my work or cheat. Being caught cheating may result in school punishment.</span>
+                <span>I will not use BALO AI to cheat.</span>
               </label>
             </div>
-          )}
-        </motion.header>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        {/* Conversation */}
-        <section className="flex-1">
+      <div className="balo-ai-scroll relative min-h-0 flex-1 overflow-y-auto overscroll-contain">
+        <AnimatePresence mode="wait">
           {chat.modeOff ? (
-            <div className="rounded-3xl border border-border bg-card/70 p-10 text-center text-sm text-muted-foreground">
-              This mode is currently switched off by the school. Please try again later.
-            </div>
+            <motion.div
+              key="off"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid min-h-full place-items-center px-4"
+            >
+              <p className="max-w-sm text-center text-sm text-muted-foreground">
+                This mode is currently switched off by the school. Please try again later.
+              </p>
+            </motion.div>
           ) : !started ? (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {STARTERS[chat.mode].map((s, i) => (
-                <motion.button
-                  key={s}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 + i * 0.06, duration: 0.35 }}
-                  onClick={() => chat.mode !== "student" || studentPledge ? chat.send(s) : undefined}
-                  disabled={chat.mode === "student" && !studentPledge}
-                  className="group flex items-start gap-3 rounded-2xl border border-border bg-card/80 p-4 text-left text-sm backdrop-blur transition hover:border-primary/50 hover:shadow-md"
-                >
-                  <Sparkles className="mt-0.5 size-4 shrink-0 text-primary transition group-hover:scale-110" />
-                  <span>{s}</span>
-                </motion.button>
-              ))}
-            </div>
+            <motion.div
+              key={`empty-${chat.mode}`}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.4, ease }}
+              className="mx-auto flex min-h-full w-full max-w-2xl flex-col items-center justify-center px-4 py-10"
+            >
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.08, duration: 0.4, ease }}
+                className="flex items-center gap-4 sm:gap-5"
+              >
+                <HeroLogo />
+                <h1>
+                  <BaloAiWordmark size="lg" />
+                </h1>
+              </motion.div>
+              <motion.p
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.4, ease }}
+                className="mt-2 max-w-md text-center text-sm text-muted-foreground sm:text-[15px]"
+              >
+                {chat.mode === "assistant"
+                  ? "Ask anything about BALO English Medium School."
+                  : "Study help from the books and syllabus used at school."}
+              </motion.p>
+
+              <div className="mt-8 flex w-full flex-wrap justify-center gap-2">
+                {STARTERS[chat.mode].map((s, i) => (
+                  <motion.button
+                    key={s}
+                    type="button"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.28 + i * 0.05, duration: 0.35, ease }}
+                    onClick={() => {
+                      if (!blocked) chat.send(s);
+                    }}
+                    disabled={blocked}
+                    className="rounded-full bg-card/80 px-4 py-2 text-left text-[13px] text-foreground/80 ring-1 ring-border/70 transition hover:bg-card hover:text-foreground hover:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    {s}
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
           ) : (
-            <div className="space-y-4 pb-4">
-              <AnimatePresence initial={false}>
-                {chat.messages.map((m, i) => <Bubble key={i} m={m} />)}
-              </AnimatePresence>
-              {chat.busy && (
-                <div className="flex items-center gap-2 pl-10 text-xs text-muted-foreground">
-                  <Loader2 className="size-3.5 animate-spin" /> BALO AI is thinking…
+            <motion.div
+              key={`chat-${chat.mode}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="mx-auto w-full max-w-2xl space-y-4 px-4 py-6 sm:px-5"
+            >
+              {chat.messages.map((m, i) =>
+                m.role === "assistant" && !m.content ? null : <Bubble key={i} m={m} />,
+              )}
+              {chat.busy && <Typing />}
+              {chat.error && (
+                <div className="rounded-2xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                  {chat.error}
                 </div>
               )}
               <div ref={endRef} />
-            </div>
+            </motion.div>
           )}
-
-          {chat.error && (
-            <div className="mt-4 rounded-2xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
-              {chat.error}
-            </div>
-          )}
-        </section>
-        </div>
+        </AnimatePresence>
       </div>
 
-      {/* Composer — fixed at the bottom, never scrolls away */}
       {!chat.modeOff && (
-        <div className="relative z-20 shrink-0 border-t border-border/60 bg-background/95 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md sm:px-6">
-          <div className="mx-auto w-full max-w-4xl">
-            <div className="rounded-3xl border border-border bg-card/90 p-3 shadow-xl backdrop-blur">
-
-              {canUpload && chat.image && (
-                <div className="mb-2 flex items-center gap-2 px-1">
-                  <img src={chat.image} alt="Attached" className="size-14 rounded-xl border border-border object-cover" />
-                  <button
-                    onClick={() => chat.setImage(null)}
-                    className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
-                  >
-                    <X className="size-3.5" /> Remove
-                  </button>
-                </div>
-              )}
-              <form
-                onSubmit={(e) => { e.preventDefault(); chat.send(chat.input); }}
-                className="flex items-end gap-2"
-              >
-                {canUpload && (
-                  <>
-                    <input
-                      ref={fileRef}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => { chat.pickImage(e.target.files?.[0]); e.currentTarget.value = ""; }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => fileRef.current?.click()}
-                      title="Upload a photo of your question"
-                      className="shrink-0 rounded-2xl border border-border p-2.5 hover:bg-muted"
-                    >
-                      <ImagePlus className="size-4" />
-                    </button>
-                  </>
-                )}
-                <textarea
-                  ref={chat.inputRef}
-                  rows={1}
-                  value={chat.input}
-                  onChange={(e) => chat.setInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); chat.send(chat.input); }
-                  }}
-                  placeholder={chat.mode === "assistant" ? "Ask anything about BALO…" : "Ask a study question…"}
-                  className="max-h-32 flex-1 resize-none bg-transparent px-2 py-2.5 text-sm outline-none"
+        <div className="relative z-10 shrink-0 bg-gradient-to-t from-background via-background to-transparent px-3 pb-[max(0.85rem,env(safe-area-inset-bottom))] pt-2 sm:px-5">
+          <div className="mx-auto w-full max-w-2xl">
+            {canUpload && chat.image && (
+              <div className="mb-2 flex items-center gap-2 px-1">
+                <img
+                  src={chat.image}
+                  alt="Attached"
+                  className="size-12 rounded-xl object-cover ring-1 ring-border"
                 />
                 <button
                   type="button"
-                  onClick={chat.reset}
-                  title="Clear this conversation"
-                  className="shrink-0 rounded-2xl border border-border p-2.5 hover:bg-muted"
+                  onClick={() => chat.setImage(null)}
+                  className="inline-flex items-center gap-1 text-xs text-muted-foreground transition hover:text-destructive"
                 >
-                  <RotateCcw className="size-4" />
+                  <X className="size-3.5" /> Remove
                 </button>
-                <button
-                  type="submit"
-                   disabled={chat.busy || (chat.mode === "student" && !studentPledge) || (!chat.input.trim() && !(chat.image && canUpload))}
-                  className="shrink-0 grid size-11 place-items-center rounded-2xl bg-primary text-primary-foreground transition hover:brightness-110 disabled:opacity-40"
-                >
-                  <Send className="size-4" />
-                </button>
-              </form>
-            </div>
-            <p className="mt-2 text-center text-[11px] text-muted-foreground">
-               {chat.mode === "student" && !studentPledge ? "Accept the learning pledge to begin · " : "BALO AI answers from official school information · "}
-              <Link to="/" className="underline hover:text-foreground">Back to website</Link>
-            </p>
+              </div>
+            )}
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!blocked) chat.send(chat.input);
+              }}
+              className="flex items-end gap-1.5 rounded-[1.6rem] bg-card/90 p-1.5 shadow-soft ring-1 ring-border/70 backdrop-blur-md"
+            >
+              {canUpload && (
+                <>
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      chat.pickImage(e.target.files?.[0]);
+                      e.currentTarget.value = "";
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    title="Upload a photo of your question"
+                    className="grid size-10 shrink-0 place-items-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                  >
+                    <ImagePlus className="size-4" />
+                  </button>
+                </>
+              )}
+              <textarea
+                ref={chat.inputRef}
+                rows={1}
+                value={chat.input}
+                onChange={(e) => chat.setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    if (!blocked) chat.send(chat.input);
+                  }
+                }}
+                placeholder={
+                  blocked
+                    ? "Accept the learning pledge to begin…"
+                    : chat.mode === "assistant"
+                      ? "Ask anything about BALO…"
+                      : "Ask a study question…"
+                }
+                className="max-h-32 min-h-10 flex-1 resize-none bg-transparent px-3 py-2.5 text-sm outline-none placeholder:text-muted-foreground/70"
+              />
+              <button
+                type="submit"
+                disabled={
+                  chat.busy || blocked || (!chat.input.trim() && !(chat.image && canUpload))
+                }
+                aria-label="Send"
+                className="grid size-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition hover:scale-105 hover:brightness-110 disabled:scale-100 disabled:opacity-35"
+              >
+                <Send className="size-4" />
+              </button>
+            </form>
           </div>
         </div>
       )}
     </main>
-
   );
 }

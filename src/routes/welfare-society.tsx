@@ -3,6 +3,9 @@ import { PageHero, Section, Reveal, SampleImage, useLightbox } from "@/component
 import { Trophy, ShieldCheck, Scale, HeartHandshake } from "lucide-react";
 import welfare1 from "@/assets/balo-welfare-society.jpg";
 import welfare2 from "@/assets/balo-background.jpg";
+import bettaPortrait from "@/assets/welfare-betta.jpg";
+import liamPortrait from "@/assets/welfare-liam.jpg";
+import annePortrait from "@/assets/welfare-anne.jpg";
 
 export const Route = createFileRoute("/welfare-society")({
   head: () => ({
@@ -100,10 +103,25 @@ function WelfarePage() {
       </Section>
 
       <Section title="The people and family behind the work" eyebrow="Our global family">
-        <div className="grid gap-5 md:grid-cols-3">
-          <Reveal><article className="h-full rounded-3xl border border-border bg-card p-6 shadow-soft"><h3 className="font-display text-xl font-bold">Elisabetta “Betta” Ravaioli</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">Founder of Balo Italy, Betta began the Balo story after volunteering with Mother Teresa’s Missionaries of Charity in Kolkata in 2005. Her work grew into direct support for children and families in Howrah.</p></article></Reveal>
-          <Reveal i={1}><article className="h-full rounded-3xl border border-border bg-card p-6 shadow-soft"><h3 className="font-display text-xl font-bold">Liam Ashe</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">Chairperson and coordinator for Balo Children Ireland, Liam is a former teacher at St. Flannan’s College in Ennis. He coordinates fundraising and visits Kolkata as a volunteer.</p></article></Reveal>
-          <Reveal i={2}><article className="h-full rounded-3xl border border-border bg-card p-6 shadow-soft"><h3 className="font-display text-xl font-bold">Anna Leache</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">Anna coordinates Balo USA from Seattle. She met Betta and Liam while volunteering in Kolkata and helps share the mission and support projects in India.</p></article></Reveal>
+        <div className="grid gap-6 md:grid-cols-3">
+          <Reveal>
+            <article className="h-full overflow-hidden rounded-xl border border-border bg-card shadow-soft">
+              <SampleImage label="Elisabetta “Betta” Ravaioli, founder of Balo Italia" src={bettaPortrait} ratio="4 / 5" onOpen={lightbox.open} />
+              <div className="p-5"><h3 className="font-display text-xl font-bold">Elisabetta “Betta” Ravaioli</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">Founder of Balo Italia, Betta began the Balo story after volunteering with Mother Teresa’s Missionaries of Charity in Kolkata in 2005. Her work grew into direct support for children and families in Howrah.</p></div>
+            </article>
+          </Reveal>
+          <Reveal i={1}>
+            <article className="h-full overflow-hidden rounded-xl border border-border bg-card shadow-soft">
+              <SampleImage label="Liam Ashe, chairperson of Balo Children Ireland" src={liamPortrait} ratio="4 / 5" onOpen={lightbox.open} />
+              <div className="p-5"><h3 className="font-display text-xl font-bold">Liam Ashe</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">Chairperson and coordinator for Balo Children Ireland, Liam is a former teacher at St. Flannan’s College in Ennis. He coordinates fundraising and visits Kolkata as a volunteer.</p></div>
+            </article>
+          </Reveal>
+          <Reveal i={2}>
+            <article className="h-full overflow-hidden rounded-xl border border-border bg-card shadow-soft">
+              <SampleImage label="Anne Leache, Balo USA coordinator" src={annePortrait} ratio="4 / 5" onOpen={lightbox.open} />
+              <div className="p-5"><h3 className="font-display text-xl font-bold">Anne “Anna” Leache</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">A Seattle teacher and volunteer, Anne Leache became involved in Balo after volunteering in Kolkata in 2005. She helps coordinate Balo USA and its support for projects in India.</p></div>
+            </article>
+          </Reveal>
         </div>
         <div className="mt-8 rounded-3xl border border-border bg-card p-6 shadow-soft"><h3 className="font-display text-2xl font-bold">Our sister organisations</h3><p className="mt-3 leading-relaxed text-muted-foreground">Balo India works with Balo Italia, Balo USA, Balo Children Ireland and partners in Malaysia to support education, nutrition, health, school supplies, uniforms, women’s training and the safety of vulnerable girls.</p><div className="mt-5 flex flex-wrap gap-3"><a href="https://balo.ie/" target="_blank" rel="noopener noreferrer" className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground">Visit Balo Ireland</a><a href="https://www.balousa.org/" target="_blank" rel="noopener noreferrer" className="rounded-full border border-border px-5 py-2 text-sm font-semibold">Balo USA</a><a href="https://www.balo.it/en/" target="_blank" rel="noopener noreferrer" className="rounded-full border border-border px-5 py-2 text-sm font-semibold">Balo Italia</a></div></div>
       </Section>
